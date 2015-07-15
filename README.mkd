@@ -27,4 +27,4 @@ The parser is generated from a grammar file (based on the
 
 Or:
 
-    $ cat TURTLE_FILE > ldtr
+    $ cat TURTLE_FILE | ldtr
