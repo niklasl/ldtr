@@ -1,12 +1,18 @@
 {
   "name": "ldtr",
   "description": "Linked Data Transcriber",
-  "keywords": ["JSON-LD", "JSONLD", "LD", "TriG", "Turtle", "NTriples", "NQuads", "RDF", "JSON"],
+  "keywords": ["JSON-LD", "JSONLD", "Linked Data", "LD", "TriG", "Turtle", "NTriples", "NQuads", "RDF", "JSON"],
   "author": "Niklas Lindström <lindstream@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/niklasl/ldtr",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niklasl/ldtr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/niklasl/ldtr/issues"
+  },
   "version": "0.1.0",
-  "licenses": [
-    {"type": "MIT", "url": "http://opensource.org/licenses/MIT"}
-  ],
   "devDependencies": {
     "pegjs": "^0.8.0",
     "tape": "^4.0.0"
