@@ -17,7 +17,7 @@
     "pegjs": "^0.8.0",
     "tape": "^4.0.0"
   },
-  "files": ["build", "lib"],
+  "files": ["build", "lib", "bin"],
   "main": "lib/index.js",
   "bin": "bin/ldtr",
   "scripts": {
