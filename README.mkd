@@ -1,0 +1,23 @@
+# ldtr
+
+A Linked Data transcriber.
+
+This package turns [TriG](http://www.w3.org/TR/trig/) (and its subsets Turtle,
+NQuads and NTriples) into [JSON-LD](http://www.w3.org/TR/json-ld/).
+
+This is done by transcribing the TriG source as directly as possible into
+a valid JSON-LD structure that represents the same RDF.
+
+The parser is generated from a grammar file (based on the
+[TriG W3C EBNF Grammar](http://www.w3.org/TR/trig/#sec-grammar)) using
+[PEG.js](http://pegjs.org/).
+
+## CLI
+
+Usage:
+
+    $ ldtr TURTLE_FILE
+
+Or:
+
+    $ cat TURTLE_FILE > ldtr

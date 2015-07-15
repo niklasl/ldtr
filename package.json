@@ -1,0 +1,22 @@
+{
+  "name": "ldtr",
+  "description": "Linked Data Transcriber",
+  "keywords": ["JSON-LD", "JSONLD", "LD", "TriG", "Turtle", "NTriples", "NQuads", "RDF", "JSON"],
+  "author": "Niklas Lindström <lindstream@gmail.com>",
+  "version": "0.1.0",
+  "licenses": [
+    {"type": "MIT", "url": "http://opensource.org/licenses/MIT"}
+  ],
+  "devDependencies": {
+    "pegjs": "^0.8.0",
+    "tape": "^4.0.0"
+  },
+  "files": ["build", "lib"],
+  "main": "lib/index.js",
+  "bin": "bin/ldtr",
+  "scripts": {
+    "build": "npm run peg",
+    "peg": "pegjs src/parsers/trig.pegjs build/parsers/trig.js",
+    "test": "node --harmony --use-strict test/test_trig.js"
+  }
+}
