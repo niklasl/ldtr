@@ -1,7 +1,7 @@
-let trigParser = require('../build/parsers/trig.js')
+var trigParser = require('../lib/parsers/trig.js')
 
 try {
-  let result = trigParser.parse('\
+  var result = trigParser.parse('\
   @prefix : <http://example.net/vocab/> . \n\
   @prefix ns: <http://example.com/ns/> . \n\
   PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n\

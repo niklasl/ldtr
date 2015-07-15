@@ -12,17 +12,16 @@
   "bugs": {
     "url": "https://github.com/niklasl/ldtr/issues"
   },
-  "version": "0.1.0",
+  "version": "0.1.2",
   "devDependencies": {
     "pegjs": "^0.8.0",
     "tape": "^4.0.0"
   },
-  "files": ["build", "lib", "bin"],
+  "files": ["lib", "bin"],
   "main": "lib/index.js",
   "bin": "bin/ldtr",
   "scripts": {
-    "build": "npm run peg",
-    "peg": "pegjs src/parsers/trig.pegjs build/parsers/trig.js",
+    "peg": "pegjs src/parsers/trig.pegjs lib/parsers/trig.js",
     "test": "node --harmony --use-strict test/test_trig.js"
   }
 }
