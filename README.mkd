@@ -12,9 +12,16 @@ The parser is generated from a grammar file (based on the
 [TriG W3C EBNF Grammar](http://www.w3.org/TR/trig/#sec-grammar)) using
 [PEG.js](http://pegjs.org/).
 
-## CLI
+## Install
 
-Usage:
+    $ npm install ldtr
+
+## Usage
+
+    ldtr = require('ldtr')
+    console.log(ldtr.trig.parse('<a> :b "c" .'))
+
+## Command Line
 
     $ ldtr TURTLE_FILE
 
