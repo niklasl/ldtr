@@ -1,0 +1,32 @@
+
+@prefix : <http://example.net/vocab/> .
+@prefix ns: <http://example.com/ns/> .
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+base <http://example.org/>
+
+# a comment
+<http://example.org/thing#it> a :Thing; # a type
+  :label "Just a Thing."@en-GB ;
+  :homepage <http://example.org/thing.html>;
+  :name "Thing";
+  :date "1900"^^xsd:gYear;
+  :date "2000"^^xsd:gYear;
+  ns:def true, false ; :number -11 .
+
+</other> a :Thing .
+
+</some> :item [ :name "Blank 1" ] .
+</more> :item [ :name "Blank 1.1" ], [ :name "Blank 1.2" ] .
+
+[] :name "Blank 2".
+
+[ :name "Blank 3" ] .
+
+_:blank :name "Blank 4".
+
+<items> :value (<one> "two" 3).
+
+ns:term a ns:Thing .
+:term a ns:Term .
+: a ns:Set .
+
