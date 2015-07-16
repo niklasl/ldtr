@@ -93,17 +93,17 @@ block	=	triplesOrGraph / wrappedGraph / triples2 / "GRAPH" labelOrSubject wrappe
 
 triplesOrGraph =
     subject:labelOrSubject pairs:(wrappedGraph /
-                                 pos:predicateObjectList '.' { return pos; } )
+                                 pos:predicateObjectList IGNORE '.' { return pos; } )
     {
         return reducePairs(subject, pairs);
     }
 
 triples2 =
-    bnpairs:blankNodePropertyList pos:predicateObjectList? '.'
+    bnpairs:blankNodePropertyList pos:predicateObjectList? IGNORE '.'
     {
         return pos? reducePairs(bnpairs, pos) : bnpairs;
     }
-    / collection:collection pos:predicateObjectList '.'
+    / collection:collection pos:predicateObjectList IGNORE '.'
     {
         return pos? reducePairs(bnpairs, pos) : bnpairs;
     }
@@ -142,7 +142,7 @@ sparqlBase =
 triples	=	subject predicateObjectList / blankNodePropertyList predicateObjectList?
 
 predicateObjectList =
-    verb:verb objectList:objectList rest:(';' vol:(verb objectList)? { return vol; } )*
+    verb:verb objectList:objectList rest:(';' vol:(verb objectList)? { return vol; } )* IGNORE
     {
         function toPair(verb, objectList) {
             var po = {};
@@ -152,7 +152,8 @@ predicateObjectList =
         var po = toPair(verb, objectList);
         var pairs = [po];
         for (var pair of rest) {
-            //if (pair === null) continue
+            if (pair === null) // last ';', so we could also break
+                continue
             po = toPair(pair[0], pair[1]);
             pairs.push(po);
         }
@@ -314,7 +315,7 @@ WS	=	'\u0020' / '\u0009' / '\u000D' / '\u000A'
 
 ANON = '[' IGNORE ']' { return {}; }
 
-PN_CHARS_BASE	=	[A-Z] / [a-z] / [\u00C0-\u00D6] / [\u00D8-\u00F6] / [\u00F8-\u02FF] / [\u0370-\u037D] / [\u037F-\u1FFF] / [\u200C-\u200D] / [\u2070-\u218F] / [\u2C00-\u2FEF] / [\u3001-\uD7FF] / [\uF900-\uFDCF] / [\uFDF0-\uFFFD] //[FIXME:last-rule-fails] / [\u10000-\uEFFFF]
+PN_CHARS_BASE	=	[A-Z] / [a-z] / [\u00C0-\u00D6] / [\u00D8-\u00F6] / [\u00F8-\u02FF] / [\u0370-\u037D] / [\u037F-\u1FFF] / [\u200C-\u200D] / [\u2070-\u218F] / [\u2C00-\u2FEF] / [\u3001-\uD7FF] / [\uF900-\uFDCF] / [\uFDF0-\uFFFD] / /*FIXME:last-rule-fails: [\u10000-\uEFFFF] used-instead:*/ [0-9A-Za-z_-]
 // FIXME: needed to change PN_CHARS_BASE to PN_CHARS_BASE+ below, is this a bug in the TriG grammar?
 PN_CHARS_U	=	PN_CHARS_BASE+ / '_'
 PN_CHARS	=	PN_CHARS_U / '-' / [0-9] / '\u00B7' / [\u0300-\u036F] / [\u203F-\u2040]
