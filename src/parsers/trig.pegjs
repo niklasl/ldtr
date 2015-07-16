@@ -43,7 +43,7 @@
                     if (!Array.isArray(existing)) {
                         existing = [existing];
                     }
-                    if (Array.isArray(value.forEach)) {
+                    if (Array.isArray(value)) {
                         existing.concat(value);
                     } else {
                         existing.push(value);
@@ -78,6 +78,8 @@ trigDoc =
                 }
                 assign(currentContext, ctxItem);
                 vocab = currentContext['@vocab'];
+            } else if (Array.isArray(item)) {
+                currentGraph.push.apply(currentGraph, item);
             } else {
                 var id = item['@id'];
                 if (id && id[0] === ':') {
@@ -89,13 +91,21 @@ trigDoc =
         return result.length === 1? result[0] : result;
     }
 
-block	=	triplesOrGraph / wrappedGraph / triples2 / "GRAPH" labelOrSubject wrappedGraph
+block =
+    triplesOrGraph / g:wrappedGraph { return g['@graph']; } / triples2 /
+    IGNORE "GRAPH"i name:labelOrSubject wg:wrappedGraph {
+        return assign(name, wg);
+    }
 
 triplesOrGraph =
-    subject:labelOrSubject pairs:(wrappedGraph /
+    subject:labelOrSubject labelled:(wrappedGraph /
                                  pos:predicateObjectList IGNORE '.' { return pos; } )
     {
-        return reducePairs(subject, pairs);
+        if (typeof labelled['@graph'] !== 'undefined') {
+            return assign(subject, labelled);
+        } else {
+            return reducePairs(subject, labelled);
+        }
     }
 
 triples2 =
@@ -108,8 +118,21 @@ triples2 =
         return pos? reducePairs(bnpairs, pos) : bnpairs;
     }
 
-wrappedGraph	=	'{' triplesBlock? '}'
-triplesBlock	=	triples ('.' triplesBlock?)?
+wrappedGraph =
+    IGNORE '{' tb:triplesBlock? IGNORE '}' IGNORE
+    {
+        return {'@graph': tb};
+    }
+
+triplesBlock =
+    triples:triples next:('.' block:triplesBlock? { return block; } )?
+    {
+        var items = [triples];
+        if (next) {
+            items.push.apply(items, next);
+        }
+        return items;
+    }
 
 labelOrSubject = iri / BlankNode
 
@@ -139,7 +162,12 @@ sparqlBase =
         return base(iriref);
     }
 
-triples	=	subject predicateObjectList / blankNodePropertyList predicateObjectList?
+triples =
+    subject:subject pos:predicateObjectList
+    {
+        return reducePairs(subject, pos);
+    }
+    / blankNodePropertyList predicateObjectList?
 
 predicateObjectList =
     verb:verb objectList:objectList rest:(';' vol:(verb objectList)? { return vol; } )* IGNORE

@@ -30,3 +30,18 @@ ns:term a ns:Thing .
 :term a ns:Term .
 : a ns:Set .
 
+{
+    <doc> a :Document .
+    <thing> a :Thing .
+}
+
+<doc> {
+    <doc> a :Document .
+    <thing> a :Thing .
+}
+
+GRAPH <doc> {
+    <doc> a :Document .
+    <thing> a :Thing .
+}
+
