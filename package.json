@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/niklasl/ldtr/issues"
   },
-  "version": "0.1.4",
+  "version": "0.1.5",
   "devDependencies": {
     "pegjs": "^0.8.0",
     "tape": "^4.0.0"
