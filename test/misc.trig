@@ -17,7 +17,11 @@ base <http://example.org/>
                'string\'''' .
 
 </literal/2> :value """multiline
-               "string\"""" .
+               "string\"""" . # "
+
+</numbers> :number 1, +2, -3,
+    4.0, +4.1, -4.2,
+    5e0, +5e1, -5e2, 6e+0, 6e-1, 1.3e37 .
 
 </other> a :Thing .
 

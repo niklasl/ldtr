@@ -231,7 +231,9 @@ collection = IGNORE '(' IGNORE collection:object* IGNORE ')' IGNORE
         return {'@list': collection};
     }
 
-NumericLiteral	=	INTEGER / DECIMAL / DOUBLE
+// NOTE: PEG.js needed reversed match order
+NumericLiteral =
+    DOUBLE / DECIMAL / INTEGER
 
 RDFLiteral =
     rdfliteral: String tag:(LANGTAG /
@@ -248,8 +250,8 @@ RDFLiteral =
 BooleanLiteral =
     'true' { return true; } / 'false' { return false; }
 
+// NOTE: PEG.js needed long quotes before regular
 String =
-    // NOTE: moved long quotes before regular to get PEG.js to work
     IGNORE value:(STRING_LITERAL_LONG_SINGLE_QUOTE / STRING_LITERAL_LONG_QUOTE /
                   STRING_LITERAL_QUOTE / STRING_LITERAL_SINGLE_QUOTE) IGNORE
     {
@@ -317,9 +319,36 @@ INTEGER =
         return i;
     }
 
-DECIMAL	=	[+-]? ([0-9]* '.' [0-9]+)
-DOUBLE	=	[+-]? ([0-9]+ '.' [0-9]* EXPONENT / '.' [0-9]+ EXPONENT / [0-9]+ EXPONENT)
-EXPONENT	=	[eE] [+-]? [0-9]+
+DECIMAL =
+    sign:[+-]? digits:(whole:[0-9]* '.' fraction:[0-9]+ {
+            return (whole? whole.join('') : '') + '.' + fraction.join('');
+        })
+    {
+        return parseFloat((sign || '') + digits, 10);
+    }
+
+DOUBLE =
+    sign:[+-]? digits:(
+        whole:[0-9]+ '.' fraction:[0-9]* exp:EXPONENT {
+            return whole.join('') + '.' +
+                (fraction? fraction.join('') : '') + exp;
+        }
+        / '.' fraction:[0-9]+ exp:EXPONENT {
+            return fraction.join('') + exp;
+        }
+        / whole:[0-9]+ exp:EXPONENT {
+            return whole.join('') + exp;
+        }
+    )
+    {
+        return parseFloat((sign || '') + digits, 10);
+    }
+
+EXPONENT =
+    e:[eE] sign:[+-]? digits:[0-9]+
+    {
+        return e + (sign || '') + digits.join('');
+    }
 
 STRING_LITERAL_QUOTE =
     '"' value:([^\u0022\u005C\u000A\u000D] / ECHAR / UCHAR)* '"'
