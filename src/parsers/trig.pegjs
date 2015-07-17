@@ -205,6 +205,9 @@ objectList =
 verb =
     IGNORE verb:(predicate / 'a' {return '@type'; } ) IGNORE
     {
+        var id = verb['@id'];
+        if (id)
+            return id;
         return verb;
     }
 
@@ -386,12 +389,16 @@ ECHAR =
         return char;
     }
 
-NIL	=	'(' IGNORE ')'
-WS	=	'\u0020' / '\u0009' / '\u000D' / '\u000A'
+NIL =
+    '(' IGNORE ')'
+
+WS =
+    '\u0020' / '\u0009' / '\u000D' / '\u000A'
 
 ANON = '[' IGNORE ']' { return {}; }
 
 PN_CHARS_BASE	=	[A-Z] / [a-z] / [\u00C0-\u00D6] / [\u00D8-\u00F6] / [\u00F8-\u02FF] / [\u0370-\u037D] / [\u037F-\u1FFF] / [\u200C-\u200D] / [\u2070-\u218F] / [\u2C00-\u2FEF] / [\u3001-\uD7FF] / [\uF900-\uFDCF] / [\uFDF0-\uFFFD] / /*FIXME:last-rule-fails: [\u10000-\uEFFFF] used-instead:*/ [0-9A-Za-z_-]
+
 // FIXME: needed to change PN_CHARS_BASE to PN_CHARS_BASE+ below, is this a bug in the TriG grammar?
 PN_CHARS_U	=	PN_CHARS_BASE+ / '_'
 PN_CHARS	=	PN_CHARS_U / '-' / [0-9] / '\u00B7' / [\u0300-\u036F] / [\u203F-\u2040]
@@ -417,6 +424,7 @@ PERCENT	=	'%' HEX HEX
 HEX	=	[0-9] / [A-F] / [a-f]
 PN_LOCAL_ESC	=	'\\' ('_' / '~' / '.' / '-' / '!' / '$' / '&' / "'" / '(' / ')' / '*' / '+' / ',' / ';' / '=' / '/' / '?' / '#' / '@' / '%')
 
-IGNORE = (WS / '#' [^\u000D\u000A]*[\u000D\u000A])*
+IGNORE =
+    (WS / '#' [^\u000D\u000A]*[\u000D\u000A])*
 
 /* vim: set ft=javascript sts=4 sw=4 sr : */
