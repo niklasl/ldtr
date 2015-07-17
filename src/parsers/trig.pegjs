@@ -249,8 +249,9 @@ BooleanLiteral =
     'true' { return true; } / 'false' { return false; }
 
 String =
-    IGNORE value:(STRING_LITERAL_QUOTE / STRING_LITERAL_SINGLE_QUOTE /
-               STRING_LITERAL_LONG_SINGLE_QUOTE / STRING_LITERAL_LONG_QUOTE) IGNORE
+    // NOTE: moved long quotes before regular to get PEG.js to work
+    IGNORE value:(STRING_LITERAL_LONG_SINGLE_QUOTE / STRING_LITERAL_LONG_QUOTE /
+                  STRING_LITERAL_QUOTE / STRING_LITERAL_SINGLE_QUOTE) IGNORE
     {
         return value;
     }
@@ -332,12 +333,30 @@ STRING_LITERAL_SINGLE_QUOTE =
         return value.join('');
     }
 
-STRING_LITERAL_LONG_SINGLE_QUOTE	=	"'''" (("'" / "''")? ([^'\\] / ECHAR / UCHAR))* "'''"
+STRING_LITERAL_LONG_SINGLE_QUOTE =
+    "'''" value:(first:("'" / "''")?
+                 rest:([^'\\] / ECHAR / UCHAR)
+                       { return (first || '') + rest; } )* "'''"
+    {
+        return value.join('');
+    }
 
-STRING_LITERAL_LONG_QUOTE	=	'"""' (('"' / '""')? ([^"\\] / ECHAR / UCHAR))* '"""'
+STRING_LITERAL_LONG_QUOTE =
+    '"""' value:(first:('"' / '""')?
+                 rest:([^"\\] / ECHAR / UCHAR)
+                      { return (first || '') + rest; } )* '"""'
+    {
+        return value.join('');
+    }
 
 UCHAR	=	'\\u' HEX HEX HEX HEX / '\\U' HEX HEX HEX HEX HEX HEX HEX HEX
-ECHAR	=	'\\' [tbnrf"'\\]
+
+ECHAR =
+    '\\' char:[tbnrf"'\\]
+    {
+        return char;
+    }
+
 NIL	=	'(' IGNORE ')'
 WS	=	'\u0020' / '\u0009' / '\u000D' / '\u000A'
 

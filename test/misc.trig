@@ -13,6 +13,12 @@ base <http://example.org/>
   :date "2000"^^xsd:gYear;
   ns:def true, false ; :number -11 .
 
+</literal/1> :value '''multiline
+               'string\'''' .
+
+</literal/2> :value """multiline
+               "string\"""" .
+
 </other> a :Thing .
 
 </some> :item [ :name "Blank 1" ] .
