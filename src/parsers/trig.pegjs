@@ -145,7 +145,7 @@ prefixID =
     }
 
 base =
-    '@base' IGNORE IRIREF IGNORE '.'
+    '@base' IGNORE iriref:IRIREF IGNORE '.' IGNORE
     {
         return base(iriref);
     }
