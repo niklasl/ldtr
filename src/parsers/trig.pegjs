@@ -56,6 +56,17 @@
         return subject;
     }
 
+    var echars = {
+        t: '\t',
+        b: '\b',
+        n: '\n',
+        r: '\r',
+        f: '\f',
+        '"': '"',
+        "'": "'",
+        '\\': '\\'
+    };
+
 }
 
 trigDoc =
@@ -289,9 +300,10 @@ PNAME_NS =
         return pfx;
     }
 
-PNAME_LN = ns:PNAME_NS l:PN_LOCAL
+// TODO: needed PN_LOCAL with appended + below for parser to accept e.g. terminating ';'
+PNAME_LN = ns:PNAME_NS l:PN_LOCAL+
     {
-        return (ns === null? '' : ns + ':') + l;
+        return (ns === null? '' : ns + ':') + l.join('');
     }
 
 BLANK_NODE_LABEL =
@@ -381,12 +393,19 @@ STRING_LITERAL_LONG_QUOTE =
         return value.join('');
     }
 
-UCHAR	=	'\\u' HEX HEX HEX HEX / '\\U' HEX HEX HEX HEX HEX HEX HEX HEX
+UCHAR = '\\u' hex:(HEX HEX HEX HEX)
+    {
+        return String.fromCharCode(parseInt(hex.join(''), 16));
+    }
+    / '\\U' hex:(HEX HEX HEX HEX HEX HEX HEX HEX)
+    {
+        return String.fromCharCode(parseInt(hex.join(''), 16));
+    }
 
 ECHAR =
-    '\\' char:[tbnrf"'\\]
+    '\\' chr:[tbnrf"'\\]
     {
-        return char;
+        return echars[chr];
     }
 
 NIL =
@@ -397,11 +416,10 @@ WS =
 
 ANON = '[' IGNORE ']' { return {}; }
 
-PN_CHARS_BASE	=	[A-Z] / [a-z] / [\u00C0-\u00D6] / [\u00D8-\u00F6] / [\u00F8-\u02FF] / [\u0370-\u037D] / [\u037F-\u1FFF] / [\u200C-\u200D] / [\u2070-\u218F] / [\u2C00-\u2FEF] / [\u3001-\uD7FF] / [\uF900-\uFDCF] / [\uFDF0-\uFFFD] / /*FIXME:last-rule-fails: [\u10000-\uEFFFF] used-instead:*/ [0-9A-Za-z_-]
+PN_CHARS_BASE = [A-Z] / [a-z] / [\u00C0-\u00D6] / [\u00D8-\u00F6] / [\u00F8-\u02FF] / [\u0370-\u037D] / [\u037F-\u1FFF] / [\u200C-\u200D] / [\u2070-\u218F] / [\u2C00-\u2FEF] / [\u3001-\uD7FF] / [\uF900-\uFDCF] / [\uFDF0-\uFFFD] /*TODO:last-range-fails: / [\u10000-\uEFFFF]*/ /*TODO:also-added-forbidden-chars:*/ / [-_]
 
-// FIXME: needed to change PN_CHARS_BASE to PN_CHARS_BASE+ below, is this a bug in the TriG grammar?
-PN_CHARS_U	=	PN_CHARS_BASE+ / '_'
-PN_CHARS	=	PN_CHARS_U / '-' / [0-9] / '\u00B7' / [\u0300-\u036F] / [\u203F-\u2040]
+PN_CHARS_U = PN_CHARS_BASE / '_'
+PN_CHARS = PN_CHARS_U / '-' / [0-9] / '\u00B7' / [\u0300-\u036F] / [\u203F-\u2040]
 
 PN_PREFIX =
     base:PN_CHARS_BASE+ other:((PN_CHARS / '.')* PN_CHARS)?
@@ -410,19 +428,22 @@ PN_PREFIX =
     }
 
 PN_LOCAL =
-    //FIXME: original without + fails: chars:(PN_CHARS_U / ':' / [0-9] / PLX)
-    chars:(PN_CHARS_U / ':'+ / [0-9]+ / PLX+)
+    chr:(PN_CHARS_U / ':' / [0-9] / PLX)
     other:(chars:(PN_CHARS / '.' / ':' / PLX)* last:(PN_CHARS / ':' / PLX) {
         return (chars? chars.join('') : '') + last;
     })?
     {
-        return chars.join('') + (other? other.join('') : '');
+        return chr + (other? other.join('') : '');
     }
 
-PLX	=	PERCENT / PN_LOCAL_ESC
-PERCENT	=	'%' HEX HEX
-HEX	=	[0-9] / [A-F] / [a-f]
-PN_LOCAL_ESC	=	'\\' ('_' / '~' / '.' / '-' / '!' / '$' / '&' / "'" / '(' / ')' / '*' / '+' / ',' / ';' / '=' / '/' / '?' / '#' / '@' / '%')
+PLX = PERCENT / PN_LOCAL_ESC
+PERCENT = '%' a:HEX b:HEX { return '%' + a + b; }
+HEX = [0-9] / [A-F] / [a-f]
+PN_LOCAL_ESC =
+    '\\' chr:('_' / '~' / '.' / '-' / '!' / '$' / '&' / "'" / '(' / ')' / '*' / '+' / ',' / ';' / '=' / '/' / '?' / '#' / '@' / '%')
+    {
+        return chr;
+    }
 
 IGNORE =
     (WS / '#' [^\u000D\u000A]*[\u000D\u000A])*
