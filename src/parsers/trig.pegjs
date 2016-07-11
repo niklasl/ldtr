@@ -303,18 +303,17 @@ PNAME_NS =
 // TODO: needed PN_LOCAL with appended + below for parser to accept e.g. terminating ';'
 PNAME_LN = ns:PNAME_NS l:PN_LOCAL+
     {
-        return (ns === null? '' : ns + ':') + l.join('');
+        return (ns === null? '' : ns + ':') + l;
     }
 
 BLANK_NODE_LABEL =
-    lead:'_:' first:(PN_CHARS_U / [0-9]) rest:((PN_CHARS / '.')* PN_CHARS)?
+    lead:'_:'
+    first:(PN_CHARS_U / [0-9])
+    //((PN_CHARS / '.')* PN_CHARS)? // PEG needs:
+    rest:(chars:('.' PN_CHARS) { return chars.join(''); } / PN_CHARS) *
     {
-        var bid = lead;
-        if (first)
-            bid += first.join('');
-        if (rest)
-            bid += first.join('');
-        return {'@id': bid};
+        var label = first + (rest? rest.join('') : '');
+        return {'@id': lead + label};
     }
 
 LANGTAG =
@@ -416,24 +415,27 @@ WS =
 
 ANON = '[' IGNORE ']' { return {}; }
 
-PN_CHARS_BASE = [A-Z] / [a-z] / [\u00C0-\u00D6] / [\u00D8-\u00F6] / [\u00F8-\u02FF] / [\u0370-\u037D] / [\u037F-\u1FFF] / [\u200C-\u200D] / [\u2070-\u218F] / [\u2C00-\u2FEF] / [\u3001-\uD7FF] / [\uF900-\uFDCF] / [\uFDF0-\uFFFD] /*TODO:last-range-fails: / [\u10000-\uEFFFF]*/ /*TODO:also-added-forbidden-chars:*/ / [-_]
+PN_CHARS_BASE = [A-Z] / [a-z] / [\u00C0-\u00D6] / [\u00D8-\u00F6] / [\u00F8-\u02FF] / [\u0370-\u037D] / [\u037F-\u1FFF] / [\u200C-\u200D] / [\u2070-\u218F] / [\u2C00-\u2FEF] / [\u3001-\uD7FF] / [\uF900-\uFDCF] / [\uFDF0-\uFFFD] /*TODO:last-range-fails: / [\u10000-\uEFFFF]*/
 
 PN_CHARS_U = PN_CHARS_BASE / '_'
 PN_CHARS = PN_CHARS_U / '-' / [0-9] / '\u00B7' / [\u0300-\u036F] / [\u203F-\u2040]
 
 PN_PREFIX =
-    base:PN_CHARS_BASE+ other:((PN_CHARS / '.')* PN_CHARS)?
+    first:PN_CHARS_BASE
+    //((PN_CHARS / '.')* PN_CHARS)? // PEG needs:
+    rest:(chars:('.' PN_CHARS) { return chars.join(''); } / PN_CHARS) *
     {
-        return base.join('') + (other? other.join('') : '');
+        return first + (rest? rest.join('') : '');
     }
 
 PN_LOCAL =
-    chr:(PN_CHARS_U / ':' / [0-9] / PLX)
-    other:(chars:(PN_CHARS / '.' / ':' / PLX)* last:(PN_CHARS / ':' / PLX) {
-        return (chars? chars.join('') : '') + last;
-    })?
+    first:(PN_CHARS_U / ':' / [0-9] / PLX)
+    //((PN_CHARS / '.' / ':' / PLX)* (PN_CHARS / ':' / PLX))? // PEG needs:
+    rest:(chars:((PN_CHARS / '.' / ':' / PLX)
+            (PN_CHARS / ':' / PLX)) { return chars.join(''); }
+           / (PN_CHARS / ':' / PLX))*
     {
-        return chr + (other? other.join('') : '');
+        return first + (rest? rest.join('') : '');
     }
 
 PLX = PERCENT / PN_LOCAL_ESC
