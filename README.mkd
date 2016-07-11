@@ -18,8 +18,8 @@ The parser is generated from a grammar file (based on the
 
 ## Usage
 
-    ldtr = require('ldtr')
-    console.log(ldtr.trig.parse('<a> :b "c" .'))
+    var trigParser = require('ldtr/trig/parser');
+    console.log(ltrigParser.parse('<a> :b "c" .'));
 
 ## Command Line
 
