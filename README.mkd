@@ -1,30 +1,55 @@
-# ldtr
+# LDTR
 
-A Linked Data transcriber.
+A [Linked Data](http://linkeddata.org/) Transcriber.
 
-This package turns [TriG](http://www.w3.org/TR/trig/) (and its subsets Turtle,
-NQuads and NTriples) into [JSON-LD](http://www.w3.org/TR/json-ld/).
+This package turns various representations of
+[RDF](https://www.w3.org/TR/rdf11-primer/)
+into
+[JSON-LD](http://www.w3.org/TR/json-ld/).
 
-This is done by transcribing the TriG source as directly as possible into
-a valid JSON-LD structure that represents the same RDF.
-
-The parser is generated from a grammar file (based on the
-[TriG W3C EBNF Grammar](http://www.w3.org/TR/trig/#sec-grammar)) using
-[PEG.js](http://pegjs.org/).
+This is done by transcribing the syntax as directly as possible into a valid
+JSON-LD structure that represents the same RDF.
 
 ## Install
 
     $ npm install ldtr
 
-## Usage
-
-    var trigParser = require('ldtr/trig/parser');
-    console.log(ltrigParser.parse('<a> :b "c" .'));
-
 ## Command Line
 
-    $ ldtr TURTLE_FILE
+    $ ldtr RDF_FILE
 
 Or:
 
     $ cat TURTLE_FILE | ldtr
+
+## Supported Formats
+
+### TriG
+
+[TriG](http://www.w3.org/TR/trig/) (and its subsets Turtle, NQuads and
+NTriples).
+
+The parser is generated from a grammar file (based on the
+[TriG W3C EBNF Grammar](http://www.w3.org/TR/trig/#sec-grammar)) using
+[PEG.js](http://pegjs.org/).
+
+Usage:
+
+    var trigParser = require('ldtr/trig/parser');
+    var jsonld = ltrigParser.parse('<a> :b "c" .');
+
+### RDF/XML
+
+[RDF/XML](https://www.w3.org/TR/rdf-syntax-grammar/) is not so popular anymore.
+Still, there's a lot of old RDF/XML out there on the web.
+
+Usage:
+
+    var rdfxmlParser = require('ldtr/rdfxml/parser');
+    var serializer = new XMLSerializer();
+    rdfxmlParser.serialize = serializer.serializeToString.bind(serializer);
+    var doc = new DOMParser().parseFromString(rdfStr, 'text/xml');
+    var jsonld = rdfxmlParser.parse(doc);
+
+Any W3C XML DOM Level2 CORE compliant DOMParser and XMLSerializer will do. For
+Node and CLI usage, LDTR uses [xmldom](https://github.com/jindw/xmldom).
