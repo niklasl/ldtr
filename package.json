@@ -11,7 +11,9 @@
     "TriG",
     "Turtle",
     "NTriples",
-    "NQuads"
+    "NQuads",
+    "RDF/XML",
+    "XML"
   ],
   "author": "Niklas Lindström <lindstream@gmail.com>",
   "license": "MIT",
@@ -26,7 +28,8 @@
   "version": "0.2.0-snapshot",
   "devDependencies": {
     "pegjs": "^0.9.0",
-    "tape": "^4.0.0"
+    "tape": "^4.0.0",
+    "xmldom": "^0.1.22"
   },
   "files": [
     "lib",
