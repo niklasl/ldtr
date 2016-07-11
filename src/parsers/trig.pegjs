@@ -25,6 +25,29 @@
         return contextItem('@base', iriref['@id']);
     }
 
+    var PNAME_TAG = "_:neverspace.net,2016-01-10:ldtr:pname";
+
+    function toSymbols(objectList) {
+        function reducePname(o) {
+            return o[PNAME_TAG]? o['@id'] : o;
+            // TODO: if value is not a string, item need to use rdf:type as
+            // key for those values instead of @type
+        }
+        if (Array.isArray(objectList)) {
+            return objectList.map(function (o) {
+                return reducePname(o);
+            });
+        } else {
+            return reducePname(objectList);
+        }
+    }
+
+    function toPair(verb, objectList) {
+        var po = {};
+        po[verb] = objectList;
+        return po;
+    }
+
     function reducePairs(subject, pairs) {
         if (subject === null) {
             subject = '';
@@ -76,7 +99,26 @@ trigDoc =
         var result = [
             {'@context': currentContext, '@graph': currentGraph}
         ];
-        var vocab = null;
+        var vocab = '';
+
+        function cleanupPNameTags(item, vocab) {
+            var id = item['@id'];
+            if (item[PNAME_TAG]) {
+                delete item[PNAME_TAG];
+                if (id === null) {
+                    item['@id'] = vocab;
+                } else if (id.indexOf(':') === -1) {
+                    item['@id'] = vocab + id;
+                }
+            }
+            for (var key in item) {
+                var o = item[key];
+                if (typeof o === 'object') {
+                    cleanupPNameTags(o, vocab);
+                }
+            }
+        }
+
         for (var item of data) {
             var ctxItem = item['@context'];
             if (ctxItem) {
@@ -88,14 +130,11 @@ trigDoc =
                     );
                 }
                 assign(currentContext, ctxItem);
-                vocab = currentContext['@vocab'];
+                vocab = currentContext['@vocab'] || '';
             } else if (Array.isArray(item)) {
                 currentGraph.push.apply(currentGraph, item);
             } else {
-                var id = item['@id'];
-                if (id && id[0] === ':') {
-                    item['@id'] = vocab + id.substring(1);
-                }
+                cleanupPNameTags(item, vocab);
                 currentGraph.push(item);
             }
         }
@@ -183,17 +222,19 @@ triples =
 predicateObjectList =
     verb:verb objectList:objectList rest:(';' vol:(verb objectList)? { return vol; } )* IGNORE
     {
-        function toPair(verb, objectList) {
-            var po = {};
-            po[verb] = objectList;
-            return po;
+        if (verb === '@type') {
+            objectList = toSymbols(objectList);
         }
         var po = toPair(verb, objectList);
         var pairs = [po];
         for (var pair of rest) {
             if (pair === null) // last ';', so we could also break
                 continue
-            po = toPair(pair[0], pair[1]);
+            var restList = pair[1];
+            if (pair[0] === '@type') {
+                restList = toSymbols(restList);
+            }
+            po = toPair(pair[0], restList);
             pairs.push(po);
         }
         return pairs;
@@ -251,7 +292,7 @@ NumericLiteral =
 
 RDFLiteral =
     rdfliteral: String tag:(LANGTAG /
-                            '^^' datatype:iri { return {'@type': datatype}; } )?
+                            '^^' datatype:iri { return {'@type': datatype['@id']}; } )?
     {
         var value = rdfliteral;
         if (tag !== null) {
@@ -278,7 +319,11 @@ iri =
         return iri;
     }
 
-PrefixedName = PNAME_LN / PNAME_NS
+PrefixedName = pname:(PNAME_LN / PNAME_NS) {
+    var item = {"@id": pname};
+    item[PNAME_TAG] = true;
+    return item;
+}
 
 BlankNode =
     IGNORE bnode:(BLANK_NODE_LABEL / ANON) IGNORE
@@ -300,8 +345,7 @@ PNAME_NS =
         return pfx;
     }
 
-// TODO: needed PN_LOCAL with appended + below for parser to accept e.g. terminating ';'
-PNAME_LN = ns:PNAME_NS l:PN_LOCAL+
+PNAME_LN = ns:PNAME_NS l:PN_LOCAL
     {
         return (ns === null? '' : ns + ':') + l;
     }

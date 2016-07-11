@@ -1,6 +1,7 @@
 
 @prefix : <http://example.net/vocab/> .
 @prefix ns: <http://example.com/ns/> .
+@prefix ns2: <http://example.com/ns/2/> .
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 base <http://example.org/>
 
@@ -34,13 +35,32 @@ base <http://example.org/>
 
 [ :name "Blank 3" ] .
 
-_:blank :name "Blank 4".
+_:blank4 :name "Blank 4".
+
+_:blank5 :rel _:blank6 .
 
 <items> :value (<one> "two" 3).
 
 ns:term a ns:Thing .
 :term a ns:Term .
 : a ns:Set .
+
+ns2:term2 :term2 ns2:Term2 .
+
+ns.3:term.3 :term.3 ns2:Term.3 .
+
+:hyphened-term :hyphened-term :hyphened-term .
+
+:term :term :term .
+
+: : : .
+
+# TODO: either forbid last form or use rdf:type in output
+#<> a :Thing, ns:Thing, <other/Thing> .
+
+# pnames should become objects (not strings)
+<item> :value :one, ns:two, <three> .
+<items> :value (:one ns:two <three>).
 
 {
     <doc> a :Document .
@@ -56,4 +76,3 @@ GRAPH <doc> {
     <doc> a :Document .
     <thing> a :Thing .
 }
-
