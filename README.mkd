@@ -46,10 +46,9 @@ Still, there's a lot of old RDF/XML out there on the web.
 Usage:
 
     var rdfxmlParser = require('ldtr/rdfxml/parser');
-    var serializer = new XMLSerializer();
-    rdfxmlParser.serialize = serializer.serializeToString.bind(serializer);
     var doc = new DOMParser().parseFromString(rdfStr, 'text/xml');
-    var jsonld = rdfxmlParser.parse(doc);
+    var serializer = new XMLSerializer();
+    var jsonld = rdfxmlParser.parse(doc, serializer);
 
-Any W3C XML DOM Level2 CORE compliant DOMParser and XMLSerializer will do. For
+Any W3C XML DOM Level 2 Core compliant DOMParser and XMLSerializer will do. For
 Node and CLI usage, LDTR uses [xmldom](https://github.com/jindw/xmldom).
