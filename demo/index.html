@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<title>LDTR Demo</title>
+
+<style>
+
+  body {
+    padding: 1em 1.5em;
+  }
+
+  .row {
+    width: 100%;
+  }
+  .col, .col6, .col4 {
+    float: left;
+    width: 50%;
+  }
+  .col6 { width: 60%; }
+  .col4 { width: 40%; }
+
+  #editor {
+    font-family: Courier;
+    font-size: 12px;
+    width: 100%;
+  }
+
+  #view {
+    font-family: verdana;
+    font-size: 12px;
+    color: #000;
+  }
+
+</style>
+
+<link rel="stylesheet" href="visualizer.css" />
+
+<div class="row">
+  <div class="col6">
+    <div id="view">
+    </div>
+  </div>
+  <div class="col4">
+    <div>
+      <textarea id="editor" rows="40">
+      </textarea>
+      <div id="status">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var module = {};
+</script>
+<script src="../lib/parsers/trig.js"></script>
+<script src="visualizer.js"></script>
+<script>
+  var trig = module.exports;
+
+  var editorArea = document.getElementById('editor');
+  var statusDiv = document.getElementById('status');
+  var viewDiv = document.getElementById('view');
+
+  editorArea.onkeyup = parseAndValidate;
+
+  function parseAndValidate() {
+    var turtleText = this.value;
+    var pos = this.selectionStart;
+    var row = 1;
+    var col = 1;
+    for (var i=0; i < pos; i++) {
+      if (turtleText[i] === '\n') {
+        row += 1;
+        col = 1;
+      } else {
+        col++;
+      }
+    }
+    statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n';
+    try {
+      var result = trig.parse(turtleText);
+      statusDiv.innerText += "OK";
+    } catch (e) {
+      if (!e.location)
+        throw e;
+      statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
+        +' Col: '+ e.location.start.column +'\n'+ e.message;
+    }
+    visualize(viewDiv, result);
+  }
+
+  function loadData(url, contentType) {
+    if (!url)
+      return;
+
+    var xhtreq = new XMLHttpRequest();
+    xhtreq.open('GET', url);
+    xhtreq.setRequestHeader('Accept',
+      'text/turtle, text/trig=q=0.99, application/rdf+xml&q=0.9, text/xml&q=0.8');
+    xhtreq.onreadystatechange = function () {
+      if (xhtreq.readyState !== XMLHttpRequest.DONE)
+        return
+      if (xhtreq.status !== 200) {
+        console.log("Failed HTTP request:", xhtreq);
+      }
+      contentType = contentType || xhtreq.getResponseHeader('Content-Type');
+      //xhtreq.responseXML if */*xml
+      editorArea.value = xhtreq.responseText;
+      parseAndValidate.call(editorArea);
+      // NOTE: force browser to recognize dynamically generated :target
+      if (window.location.hash) {
+        window.location = window.location.hash;
+      }
+    };
+    xhtreq.send('');
+  }
+
+  function parseLocation() {
+    var query = window.location.search.substring(1),
+      params = query.split(/\&/).reduce(function (map, pair) {
+        var tuple = pair.split(/=/);
+        map[tuple[0]] = tuple[1];
+        return map;
+      }, {});
+    loadData(params.url, params.contentType);
+  }
+
+  parseLocation();
+
+</script>
