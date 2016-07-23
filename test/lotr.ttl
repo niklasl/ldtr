@@ -1,0 +1,15 @@
+prefix : <http://schema.org/>
+prefix bf: <http://id.loc.gov/ontologies/bibframe/>
+
+<http://example.com/book/The_Fellowship_of_the_Ring> a :Book;
+    :bookFormat :Paperback;
+    :datePublished "1956"^^:Date;
+    :exampleOfWork <http://dbpedia.org/resource/The_Fellowship_of_the_Ring> .
+
+<http://dbpedia.org/resource/The_Fellowship_of_the_Ring> a :CreativeWork;
+    :name "Fellowship of the Ring"@en;
+    bf:genreForm <http://dbpedia.org/resource/Fantasy>;
+    :author <http://dbpedia.org/resource/J._R._R._Tolkien> .
+
+<http://dbpedia.org/resource/J._R._R._Tolkien> a :Person;
+    :name "J. R. R. Tolkien", "Tolkien" .
