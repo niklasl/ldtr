@@ -4,19 +4,41 @@
 
 ----
 
+* [Intro](#intro)
 * [Install](#install)
 * [Command Line](#command-line)
 * [Supported Formats](#supported-formats)
 
 ----
 
-This package turns various representations of
+## Intro
+
+LDTR turns various representations of
 [RDF](https://www.w3.org/TR/rdf11-primer/)
 into
 [JSON-LD](http://www.w3.org/TR/json-ld/).
 
-This is done by transcribing the syntax as directly as possible into a valid
-JSON-LD structure that represents the same RDF.
+This is done by transcribing the syntax verbatim into a valid JSON-LD structure
+that represents the same RDF.
+**Only use this tool directly with data strictly under your control.**
+In any other case, you need to pass the result through a JSON-LD processor
+(such as [jsonld.js](https://github.com/digitalbazaar/jsonld.js)) in order to
+to have control over the shapes and terms of the results.
+
+RDF is about meaning, not structure. Of course meaning is intrinsically
+conveyed by structure – more or less indirectly. And if the structure is yours
+to begin with, you can leverage it directly to gain speed. But using JSON-LD as
+plain JSON is a bit like using C. Very effective and close to the metal, and
+rather dangerous if you don't know what you are doing.
+
+To a certain point, this tool can be used as a "teaching aid", for showing the
+isomorphism between different RDF serializations. Note that
+QNames/CURIEs/PNames are basically only useful in RDF syntaxes for *manual
+authoring*. They are not intended to be consumed directly, syntactically, from
+the source. By producing a JSON-LD compliant semi-compact transcript like LDTR
+does, consumers unaware of what the tokens really mean (in RDF) may be misled
+to consider them to be fixed and atomic, and not as contextually dependent
+shorthand.
 
 ## Install
 
@@ -44,7 +66,7 @@ Usage:
 
 ```javascript
 var trigParser = require('ldtr/trig/parser');
-var jsonld = ltrigParser.parse('<a> :b "c" .');
+var jsonld = trigParser.parse('<a> :b "c" .');
 ```
 
 ### RDFa
@@ -61,8 +83,8 @@ return rdfaParser.parse(doc, source, {compact: true});
 
 ### RDF/XML
 
-[RDF/XML](https://www.w3.org/TR/rdf-syntax-grammar/) is not so popular anymore.
-Still, there's a lot of old RDF/XML out there on the web.
+For all the old [RDF/XML](https://www.w3.org/TR/rdf-syntax-grammar/) out there
+on the web.
 
 Usage:
 
