@@ -1,6 +1,14 @@
 # LDTR
 
-A [Linked Data](http://linkeddata.org/) Transcriber.
+*A [Linked Data](http://linkeddata.org/) Transcriber.*
+
+----
+
+* [Install](#install)
+* [Command Line](#command-line)
+* [Supported Formats](#supported-formats)
+
+----
 
 This package turns various representations of
 [RDF](https://www.w3.org/TR/rdf11-primer/)
@@ -16,7 +24,7 @@ JSON-LD structure that represents the same RDF.
 
 ## Command Line
 
-    $ ldtr RDF_FILE
+    $ ldtr RDF_FILE_OR_URL
 
 Or:
 
@@ -26,8 +34,7 @@ Or:
 
 ### TriG
 
-[TriG](http://www.w3.org/TR/trig/) (and its subsets Turtle, NQuads and
-NTriples).
+[TriG](https://www.w3.org/TR/trig/) (and its subsets Turtle and NTriples).
 
 The parser is generated from a grammar file (based on the
 [TriG W3C EBNF Grammar](http://www.w3.org/TR/trig/#sec-grammar)) using
@@ -35,8 +42,22 @@ The parser is generated from a grammar file (based on the
 
 Usage:
 
-    var trigParser = require('ldtr/trig/parser');
-    var jsonld = ltrigParser.parse('<a> :b "c" .');
+```javascript
+var trigParser = require('ldtr/trig/parser');
+var jsonld = ltrigParser.parse('<a> :b "c" .');
+```
+
+### RDFa
+
+[RDFa 1.1](https://www.w3.org/TR/rdfa-primer/) embedded in HTML.
+
+Usage:
+
+```javascript
+var rdfaParser = require('ldtr/rdfa/parser');
+var doc = new DOMParser().parseFromString(xmlStr, 'text/html');
+return rdfaParser.parse(doc, source, {compact: true});
+```
 
 ### RDF/XML
 
@@ -45,10 +66,12 @@ Still, there's a lot of old RDF/XML out there on the web.
 
 Usage:
 
-    var rdfxmlParser = require('ldtr/rdfxml/parser');
-    var doc = new DOMParser().parseFromString(rdfStr, 'text/xml');
-    var serializer = new XMLSerializer();
-    var jsonld = rdfxmlParser.parse(doc, serializer);
+```javascript
+var rdfxmlParser = require('ldtr/rdfxml/parser');
+var doc = new DOMParser().parseFromString(rdfStr, 'text/xml');
+var serializer = new XMLSerializer();
+var jsonld = rdfxmlParser.parse(doc, serializer);
+```
 
 Any W3C XML DOM Level 2 Core compliant DOMParser and XMLSerializer will do. For
 Node and CLI usage, LDTR uses [xmldom](https://github.com/jindw/xmldom).
