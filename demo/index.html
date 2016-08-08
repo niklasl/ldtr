@@ -1,129 +1,200 @@
 <!DOCTYPE html>
 <title>LDTR Demo</title>
+<meta charset="utf-8" />
 
+<link rel="stylesheet" href="visualizer.css" />
 <style>
-
-  body {
-    padding: 1em 1.5em;
-  }
-
-  .row {
-    width: 100%;
-  }
-  .col, .col6, .col4 {
-    float: left;
-    width: 50%;
-  }
-  .col6 { width: 60%; }
-  .col4 { width: 40%; }
-
-  #editor {
-    font-family: Courier;
-    font-size: 12px;
-    width: 100%;
-  }
 
   #view {
     font-family: verdana;
     font-size: 12px;
     color: #000;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    padding: 1em 1.5em;
+  }
+
+  body.edit #view {
+    right: 50%;
+  }
+
+  #edit {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 50%;
+    overflow: auto;
+    visibility: hidden;
+  }
+
+  body.edit #edit {
+    visibility: visible;
+    background-color: #eee;
+    box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.4);
+    padding: 0.2em;
+  }
+
+  .editor {
+    visibility: hidden;
+    font-family: Courier;
+    font-size: 12px;
+    width: 99%;
+    height: 92%;
+  }
+
+  body.edit .editor {
+    visibility: visible;
   }
 
 </style>
 
-<link rel="stylesheet" href="visualizer.css" />
+<section id="view">
+</section>
+<section id="edit">
+  <textarea class="editor" rows="40"></textarea>
+  <div class="status"></div>
+</section>
 
-<div class="row">
-  <div class="col6">
-    <div id="view">
-    </div>
-  </div>
-  <div class="col4">
-    <div>
-      <textarea id="editor" rows="40">
-      </textarea>
-      <div id="status">
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  var module = {};
-</script>
+<script>var module = {};</script>
 <script src="../lib/trig/parser.js"></script>
+<script>var trig = module.exports;</script>
+<script src="../lib/rdfxml/parser.js"></script>
+<script src="../lib/rdfa/contexts.js"></script>
+<script src="../lib/rdfa/walker.js"></script>
+<script src="../lib/rdfa/parser.js"></script>
 <script src="visualizer.js"></script>
 <script>
-  var trig = module.exports;
 
-  var editorArea = document.getElementById('editor');
-  var statusDiv = document.getElementById('status');
-  var viewDiv = document.getElementById('view');
+  var ldtrDemo = {
 
-  editorArea.onkeyup = parseAndValidate;
+    init: function () {
+      this.viewDiv = document.getElementById('view');
+      this.editorArea = document.querySelector('#edit > .editor');
+      this.statusDiv = document.querySelector('#edit > .status');
+      this.editorArea.onkeyup = function () {
+        this.parseAndValidate();
+      }.bind(this);
 
-  function parseAndValidate() {
-    var turtleText = this.value;
-    var pos = this.selectionStart;
-    var row = 1;
-    var col = 1;
-    for (var i=0; i < pos; i++) {
-      if (turtleText[i] === '\n') {
-        row += 1;
-        col = 1;
+      var query = window.location.search.substring(1),
+        params = query.split(/\&/).reduce(function (map, pair) {
+          var tuple = pair.split(/=/);
+          map[tuple[0]] = tuple[1];
+          return map;
+        }, {});
+
+      if (!params.url || params.edit) {
+        document.body.classList.add('edit');
+      }
+
+      this.loadData(params.url);
+    },
+
+    loadData: function (url, realUrl) {
+      if (!url) return;
+
+      var xhtreq = new XMLHttpRequest();
+      xhtreq.open('GET', url);
+      xhtreq.setRequestHeader('Accept', this.accepts);
+      xhtreq.onreadystatechange = function () {
+        if (xhtreq.readyState !== XMLHttpRequest.DONE) {
+          if (xhtreq.readyState === XMLHttpRequest.LOADING) return;
+          if (xhtreq.getResponseHeader('Content-Type').match(/\/(\w+\+)?(x|x?ht)ml/)) {
+            xhtreq.responseType = 'document';
+          }
+          return;
+        }
+        if (xhtreq.status === 0 && !realUrl) {
+          var corsUrl = this.corsResolver + url;
+          console.log("Failed CORS, retrying with " + corsUrl);
+          this.loadData(corsUrl, url);
+          return;
+        }
+        if (xhtreq.status !== 200) {
+          console.log("Failed HTTP request:", xhtreq);
+          return;
+        }
+        this.parseAndValidate(xhtreq, realUrl || url);
+        // NOTE: force browser to recognize dynamically generated :target
+        if (window.location.hash) {
+          window.location = window.location.hash;
+        }
+      }.bind(this);
+      xhtreq.send('');
+    },
+
+    parseAndValidate: function (xhtreq, url) {
+      var data = null;
+      var contentType = 'text/turtle';
+
+      if (xhtreq) {
+        contentType = xhtreq.getResponseHeader('Content-Type').replace(/;.*/, '');
+        if (xhtreq.responseType === 'document') {
+          data = xhtreq.responseXML;
+        } else {
+          data = this.editorArea.value = xhtreq.responseText;
+        }
       } else {
-        col++;
+        data = this.editorArea.value;
       }
+
+      var pos = this.editorArea.selectionStart;
+      var row = 1;
+      var col = 1;
+      for (var i=0; i < pos; i++) {
+        if (data[i] === '\n') {
+          row += 1;
+          col = 1;
+        } else {
+          col++;
+        }
+      }
+      this.statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n';
+
+      var parse = this[contentType];
+      try {
+        var result = parse.call(this, data, url);
+        this.statusDiv.innerText += "OK";
+      } catch (e) {
+        if (!e.location)
+          throw e;
+        this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
+          +' Col: '+ e.location.start.column +'\n'+ e.message;
+        return;
+      }
+      visualize(this.viewDiv, result);
+    },
+
+    corsResolver: 'http://cors.io/?u=',
+
+    accepts: ['text/turtle', 'text/trig;q=0.9',
+      'application/rdf+xml;q=0.8', 'text/xml;q=0.7',
+      'text/html;q=0.6'].join(', '),
+
+    'text/trig': function (text) {
+      return trig.parse(text);
+    },
+
+    'text/turtle': function () {
+      return this['text/trig'].apply(this, arguments);
+    },
+
+    'application/ld+json': JSON.parse.bind(JSON),
+
+    'application/rdf+xml': function (doc) {
+      return RdfXmlParser.parse(doc, new XMLSerializer());
+    },
+
+    'text/html': function (doc, url) {
+      return RDFaJSONLDParser.parse(doc, url, {compact: true});
     }
-    statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n';
-    try {
-      var result = trig.parse(turtleText);
-      statusDiv.innerText += "OK";
-    } catch (e) {
-      if (!e.location)
-        throw e;
-      statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
-        +' Col: '+ e.location.start.column +'\n'+ e.message;
-    }
-    visualize(viewDiv, result);
-  }
 
-  function loadData(url, contentType) {
-    if (!url)
-      return;
+  };
 
-    var xhtreq = new XMLHttpRequest();
-    xhtreq.open('GET', url);
-    xhtreq.setRequestHeader('Accept',
-      'text/turtle, text/trig=q=0.99, application/rdf+xml&q=0.9, text/xml&q=0.8');
-    xhtreq.onreadystatechange = function () {
-      if (xhtreq.readyState !== XMLHttpRequest.DONE)
-        return
-      if (xhtreq.status !== 200) {
-        console.log("Failed HTTP request:", xhtreq);
-      }
-      contentType = contentType || xhtreq.getResponseHeader('Content-Type');
-      //xhtreq.responseXML if */*xml
-      editorArea.value = xhtreq.responseText;
-      parseAndValidate.call(editorArea);
-      // NOTE: force browser to recognize dynamically generated :target
-      if (window.location.hash) {
-        window.location = window.location.hash;
-      }
-    };
-    xhtreq.send('');
-  }
-
-  function parseLocation() {
-    var query = window.location.search.substring(1),
-      params = query.split(/\&/).reduce(function (map, pair) {
-        var tuple = pair.split(/=/);
-        map[tuple[0]] = tuple[1];
-        return map;
-      }, {});
-    loadData(params.url, params.contentType);
-  }
-
-  parseLocation();
+  window.onload = ldtrDemo.init();
 
 </script>
