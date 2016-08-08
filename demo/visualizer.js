@@ -25,13 +25,13 @@ function visualize(elem, result) {
   }
 
   function showNode(node, embedded) {
-    var tag = node[ID]? 'article' : 'div';
-    var classes = embedded? 'embedded' : '';
     var id = node[ID];
-    var idattr = id? ' id="'+ id +'"' : '';
+    var tag = id != null? 'article' : 'div';
+    var classes = embedded? 'embedded' : '';
+    var idattr = id != null? ' id="'+ id +'"' : '';
     out('<'+tag + idattr +' class="card '+ classes +'">');
     out('<header>');
-    if (id) {
+    if (id != null) {
       out('<a class="id" href="#'+ id +'">'+ id +'</a>');
     }
     showType(node);
