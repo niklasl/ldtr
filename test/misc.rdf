@@ -1,0 +1,15 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns="http://schema.org/"
+         xml:base="http://example.org/">
+    <CreativeWork rdf:about="/doc">
+        <name xml:lang="en">A Document</name>
+        <dateCreated rdf:datatype="Date">2016-07-10T14:34:50+0200</dateCreated>
+        <exampleOfWork rdf:resource="http://dbpedia.org/resource/Document"/>
+        <creator>
+            <Person rdf:ID="creator-1">
+                <name>Some One</name>
+                <comment rdf:parseType="Literal">Just <em>someone</em>.</comment>
+            </Person>
+        </creator>
+    </CreativeWork>
+</rdf:RDF>

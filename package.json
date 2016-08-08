@@ -2,16 +2,18 @@
   "name": "ldtr",
   "description": "Linked Data Transcriber",
   "keywords": [
-    "JSON-LD",
-    "JSONLD",
     "Linked Data",
     "LD",
+    "RDF",
+    "JSON-LD",
+    "JSONLD",
+    "JSON",
     "TriG",
     "Turtle",
     "NTriples",
     "NQuads",
-    "RDF",
-    "JSON"
+    "RDF/XML",
+    "XML"
   ],
   "author": "Niklas Lindström <lindstream@gmail.com>",
   "license": "MIT",
@@ -23,10 +25,11 @@
   "bugs": {
     "url": "https://github.com/niklasl/ldtr/issues"
   },
-  "version": "0.1.8",
+  "version": "0.2.0-snapshot",
   "devDependencies": {
     "pegjs": "^0.9.0",
-    "tape": "^4.0.0"
+    "tape": "^4.0.0",
+    "xmldom": "^0.1.22"
   },
   "files": [
     "lib",
@@ -35,7 +38,7 @@
   "main": "lib/index.js",
   "bin": "bin/ldtr",
   "scripts": {
-    "peg": "pegjs src/parsers/trig.pegjs lib/parsers/trig.js",
-    "test": "node --harmony --use-strict test/test_trig.js"
+    "peg": "pegjs src/parsers/trig.pegjs lib/trig/parser.js",
+    "test": "npm run peg && node test/test_trig.js"
   }
 }

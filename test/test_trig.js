@@ -1,5 +1,5 @@
 var fs = require('fs');
-var trigParser = require('../lib/parsers/trig');
+var trigParser = require('../lib/trig/parser');
 
 try {
   var result = trigParser.parse(fs.readFileSync(__dirname + '/misc.trig', 'utf-8'));
