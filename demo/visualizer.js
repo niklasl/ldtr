@@ -25,18 +25,30 @@ function visualize(elem, result) {
   }
 
   function showNode(node, embedded) {
+    var graph = node[GRAPH];
     var id = node[ID];
     var tag = id != null? 'article' : 'div';
     var classes = embedded? 'embedded' : '';
-    var idattr = id != null? ' id="'+ id +'"' : '';
+    if (graph) {
+      classes += ' graph'
+    }
+    var idattr = id != null? ' id="'+ id + (graph ? '@graph' : '') +'"' : '';
     out('<'+tag + idattr +' class="card '+ classes +'">');
     out('<header>');
     if (id != null) {
       out('<a class="id" href="#'+ id +'">'+ id +'</a>');
     }
     showType(node);
-    showContents(node);
     out('</header>');
+    if (graph) {
+      if (Array.isArray(graph)) {
+        for (var it of graph) {
+          showNode(it);
+        }
+      }
+    } else {
+      showContents(node);
+    }
     out('</'+tag+'>');
   }
 

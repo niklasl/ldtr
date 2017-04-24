@@ -10,7 +10,7 @@
 
 article.card {
   background-color: #fff;
-  border: 1px solid #333;
+  border: 1px solid #aaa;
   border-radius: 3px;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
   padding: 0.5em;
@@ -25,6 +25,17 @@ article.card:hover {
 article.card:target {
   background-color: #eff;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+article.card.graph {
+  background-color: #fafafa;
+  border: 1px dashed #aaa;
+  border-radius: 3px;
+  box-shadow: none;
+}
+
+article.card.graph > header > a {
+  color: #aaa;
 }
 
 article.card.embedded {
@@ -77,13 +88,13 @@ article.card.term {
   background-color: #ffe;
   border: 1px solid #b05;
   border-radius: 6px;
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
   padding: 0.1em 0.6em;
   text-decoration: none;
 }
 
 .card a.ref:hover {
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .context b.pfx {
