@@ -32,6 +32,7 @@ article.card.graph {
   border: 1px dashed #aaa;
   border-radius: 3px;
   box-shadow: none;
+  margin: 1em 2em 1em 0;
 }
 
 article.card.graph > header > a {
@@ -57,7 +58,8 @@ article.card.term {
 }
 
 .card > header {
-  overflow: auto;
+  overflow: overlay;
+  overflow: hidden;
 }
 
 .card > header > b {

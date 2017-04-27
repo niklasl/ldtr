@@ -5,7 +5,8 @@ var CONTEXT = '@context',
   ID = '@id',
   TYPE = '@type',
   VALUE = '@value',
-  LANG = '@language';
+  LANG = '@language',
+  LIST = '@list';
 
 function visualize(elem, result) {
   var chunks = [];
@@ -89,7 +90,18 @@ function visualize(elem, result) {
         out('</div>');
       }
       else if (typeof value === 'object') {
-        if (value[ID]) {
+        if (value[LIST]) {
+          out('<div>');
+          showTerm(key);
+          out('<ol>');
+          for (var part of value[LIST]) {
+            out('<li>');
+            showContents(part, true);
+            out('</li>');
+          }
+          out('</ol>');
+          out('</div>');
+        } else if (value[ID]) {
           out('<p>');
           if (!inArray) showTerm(key);
           showRef(value);
