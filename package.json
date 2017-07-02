@@ -12,6 +12,7 @@
     "Turtle",
     "NTriples",
     "NQuads",
+    "RDFa",
     "RDF/XML",
     "XML"
   ],
