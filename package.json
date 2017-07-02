@@ -30,6 +30,9 @@
   "dependencies": {
     "xmldom": "^0.1.22"
   },
+  "browser": {
+    "xmldom": false
+  },
   "devDependencies": {
     "pegjs": "^0.9.0",
     "tape": "^4.0.0"

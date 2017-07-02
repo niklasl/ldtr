@@ -94,7 +94,7 @@ Parsing RDFa:
 ```javascript
 var rdfaParser = require('ldtr/rdfa/parser');
 var doc = new DOMParser().parseFromString(xmlStr, 'text/html');
-var jsonld = rdfaParser.parse(doc, source, {compact: true});
+var jsonld = rdfaParser.parse(doc, baseUri, {compact: true});
 ```
 
 Parsing RDF/XML:
@@ -102,7 +102,6 @@ Parsing RDF/XML:
 ```javascript
 var rdfxmlParser = require('ldtr/rdfxml/parser');
 var doc = new DOMParser().parseFromString(rdfStr, 'text/xml');
-var serializer = new XMLSerializer();
-var jsonld = rdfxmlParser.parse(doc, serializer);
+var jsonld = rdfxmlParser.parse(doc);
 ```
 
