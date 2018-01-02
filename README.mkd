@@ -85,14 +85,14 @@ usage, LDTR uses [xmldom](https://github.com/jindw/xmldom).)
 Parsing TriG:
 
 ```javascript
-var trigParser = require('ldtr/trig/parser');
+var trigParser = require('ldtr/lib/trig/parser');
 var jsonld = trigParser.parse('<a> :b "c" .');
 ```
 
 Parsing RDFa:
 
 ```javascript
-var rdfaParser = require('ldtr/rdfa/parser');
+var rdfaParser = require('ldtr/lib/rdfa/parser');
 var doc = new DOMParser().parseFromString(xmlStr, 'text/html');
 var jsonld = rdfaParser.parse(doc, baseUri, {compact: true});
 ```
@@ -100,7 +100,7 @@ var jsonld = rdfaParser.parse(doc, baseUri, {compact: true});
 Parsing RDF/XML:
 
 ```javascript
-var rdfxmlParser = require('ldtr/rdfxml/parser');
+var rdfxmlParser = require('ldtr/lib/rdfxml/parser');
 var doc = new DOMParser().parseFromString(rdfStr, 'text/xml');
 var jsonld = rdfxmlParser.parse(doc);
 ```
