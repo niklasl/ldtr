@@ -1,0 +1,224 @@
+{
+  "@context": {
+    "@vocab": "http://example.net/vocab/",
+    "ns": "http://example.com/ns/",
+    "ns2": "http://example.com/ns/2/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "@base": "http://example.org/"
+  },
+  "@graph": [
+    {
+      "@id": "http://example.org/thing#it",
+      "@type": "Thing",
+      "label": {
+        "@value": "Just a Thing.",
+        "@language": "en-GB"
+      },
+      "homepage": {
+        "@id": "http://example.org/thing.html"
+      },
+      "name": "Thing",
+      "date": [
+        {
+          "@value": "1900",
+          "@type": "xsd:gYear"
+        },
+        {
+          "@value": "2000",
+          "@type": "xsd:gYear"
+        }
+      ],
+      "ns:def": [
+        true,
+        false
+      ],
+      "number": -11
+    },
+    {
+      "@id": "/literal/1",
+      "value": "multiline\n               'string'"
+    },
+    {
+      "@id": "/literal/2",
+      "value": "multiline\n               \"string\""
+    },
+    {
+      "@id": "/numbers",
+      "number": [
+        1,
+        2,
+        -3,
+        4,
+        4.1,
+        -4.2,
+        5,
+        50,
+        -500,
+        6,
+        0.6,
+        1.3e+37
+      ]
+    },
+    {
+      "@id": "/other",
+      "@type": "Thing"
+    },
+    {
+      "@id": "/just",
+      "/some": {
+        "@id": "/IRIs"
+      }
+    },
+    {
+      "@id": "/blank/1",
+      "item": {
+        "name": "Blank 1"
+      }
+    },
+    {
+      "@id": "/blank/1.x",
+      "item": [
+        {
+          "name": "Blank 1.1"
+        },
+        {
+          "name": "Blank 1.2"
+        }
+      ]
+    },
+    {
+      "name": "Blank 2"
+    },
+    {
+      "name": "Blank 3"
+    },
+    {
+      "@id": "_:blank4",
+      "name": "Blank 4"
+    },
+    {
+      "@id": "_:blank5",
+      "rel": {
+        "@id": "_:blank6"
+      }
+    },
+    {
+      "@id": "items",
+      "value": {
+        "@list": [
+          {
+            "@id": "one"
+          },
+          "two",
+          3
+        ]
+      }
+    },
+    {
+      "@id": "ns:term",
+      "@type": "ns:Thing"
+    },
+    {
+      "@id": "http://example.net/vocab/term",
+      "@type": "ns:Term"
+    },
+    {
+      "@id": "http://example.net/vocab/",
+      "@type": "ns:Set"
+    },
+    {
+      "@id": "ns2:term2",
+      "term2": {
+        "@id": "ns2:Term2"
+      }
+    },
+    {
+      "@id": "ns.3:term.3",
+      "term.3": {
+        "@id": "ns2:Term.3"
+      }
+    },
+    {
+      "@id": "http://example.net/vocab/hyphened-term",
+      "hyphened-term": {
+        "@id": "http://example.net/vocab/hyphened-term"
+      }
+    },
+    {
+      "@id": "http://example.net/vocab/term",
+      "term": {
+        "@id": "http://example.net/vocab/term"
+      }
+    },
+    {
+      "@id": "http://example.net/vocab/",
+      "[object Object]": {
+        "@id": "http://example.net/vocab/"
+      }
+    },
+    {
+      "@id": "item",
+      "value": [
+        {
+          "@id": "http://example.net/vocab/one"
+        },
+        {
+          "@id": "ns:two"
+        },
+        {
+          "@id": "three"
+        }
+      ]
+    },
+    {
+      "@id": "items",
+      "value": {
+        "@list": [
+          {
+            "@id": "http://example.net/vocab/one"
+          },
+          {
+            "@id": "ns:two"
+          },
+          {
+            "@id": "three"
+          }
+        ]
+      }
+    },
+    {
+      "@id": "doc",
+      "@type": "Document"
+    },
+    {
+      "@id": "thing",
+      "@type": "Thing"
+    },
+    {
+      "@id": "doc",
+      "@graph": [
+        {
+          "@id": "doc",
+          "@type": "Document"
+        },
+        {
+          "@id": "thing",
+          "@type": "Thing"
+        }
+      ]
+    },
+    {
+      "@id": "doc",
+      "@graph": [
+        {
+          "@id": "doc",
+          "@type": "Document"
+        },
+        {
+          "@id": "thing",
+          "@type": "Thing"
+        }
+      ]
+    }
+  ]
+}

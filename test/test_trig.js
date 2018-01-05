@@ -1,10 +1,12 @@
-var fs = require('fs');
-var trigParser = require('../lib/trig/parser');
+const fs = require('fs')
+const tape = require('tape')
+const trigParser = require('../lib/trig/parser')
 
-try {
-  var result = trigParser.parse(fs.readFileSync(__dirname + '/misc.trig', 'utf-8'));
-  console.log(JSON.stringify(result, null, 2));
-} catch (e) {
-  console.error(JSON.stringify(e));
-  throw e;
-}
+let datadir = __dirname + '/data'
+
+tape.test('', t => {
+  let expected = JSON.parse(fs.readFileSync(datadir + '/misc-out.jsonld', 'utf-8'))
+  let result = trigParser.parse(fs.readFileSync(datadir + '/misc.trig', 'utf-8'))
+  t.deepEqual(result, expected)
+  t.end()
+})

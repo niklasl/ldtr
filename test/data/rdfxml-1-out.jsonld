@@ -1,0 +1,35 @@
+{
+  "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "@vocab": "http://schema.org/",
+    "@base": "http://example.org/"
+  },
+  "@graph": [
+    {
+      "@type": "CreativeWork",
+      "@id": "/doc",
+      "name": {
+        "@value": "A Document",
+        "@language": "en"
+      },
+      "dateCreated": {
+        "@value": "2016-07-10T14:34:50+0200",
+        "@type": "Date"
+      },
+      "exampleOfWork": {
+        "@id": "http://dbpedia.org/resource/Document"
+      },
+      "creator": [
+        {
+          "@type": "Person",
+          "@id": "#creator-1",
+          "name": "Some One",
+          "comment": {
+            "@type": "rdf:XMLLiteral",
+            "@value": "Just <em xmlns=\"http://schema.org/\">someone</em>."
+          }
+        }
+      ]
+    }
+  ]
+}

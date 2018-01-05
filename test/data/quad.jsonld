@@ -1,0 +1,1 @@
+{"@id": "http://example.org/graph", "@graph": {"@id": "http://example.org/thing", "http://example.org/vocab/created": {"@value": "2017-01-14T22:28:09+0100", "@type": "#dateTime"}}}

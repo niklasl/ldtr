@@ -28,7 +28,7 @@
   },
   "version": "0.3.0-snapshot",
   "dependencies": {
-    "xmldom": "^0.1.22"
+    "xmldom": "^0.1.27"
   },
   "browser": {
     "xmldom": false
@@ -45,6 +45,6 @@
   "bin": "bin/ldtr",
   "scripts": {
     "peg": "pegjs src/parsers/trig.pegjs lib/trig/parser.js",
-    "test": "npm run peg && node test/test_trig.js"
+    "test": "tape 'test/test_*.js'"
   }
 }

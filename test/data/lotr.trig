@@ -1,0 +1,37 @@
+prefix : <http://schema.org/>
+base <https://example.org/>
+
+</product/The_Fellowship_of_the_Ring/> {
+    </product/The_Fellowship_of_the_Ring/> a :DigitalDocument;
+        :publisher </org/kb> ;
+        :dateModified "2017-04-22T06:55:14Z"^^:DateTime ;
+        :mainEntity </product/The_Fellowship_of_the_Ring> .
+
+    </product/The_Fellowship_of_the_Ring> a :Book;
+        :bookFormat :Paperback;
+        :datePublished "1956"^^:Date;
+        :exampleOfWork </text/The_Fellowship_of_the_Ring> .
+}
+
+</text/The_Fellowship_of_the_Ring/> {
+    </text/The_Fellowship_of_the_Ring/> a :DigitalDocument;
+        :publisher </org/kb> ;
+        :dateModified "2017-04-22T06:55:14Z"^^:DateTime ;
+        :mainEntity </text/The_Fellowship_of_the_Ring> .
+
+    </text/The_Fellowship_of_the_Ring> a :CreativeWork;
+        :name "Fellowship of the Ring"@en;
+        :genre </concept/Fantasy>;
+        :author </person/J._R._R._Tolkien> .
+
+}
+
+</person/J._R._R._Tolkien/> {
+    </person/J._R._R._Tolkien/> a :DigitalDocument;
+        :publisher </org/kb> ;
+        :dateModified "2017-04-22T06:55:14Z"^^:DateTime ;
+        :mainEntity </person/J._R._R._Tolkien> .
+
+    </person/J._R._R._Tolkien> a :Person;
+        :name "J. R. R. Tolkien", "Tolkien" .
+}

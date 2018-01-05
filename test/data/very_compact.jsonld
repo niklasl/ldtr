@@ -1,0 +1,21 @@
+{
+  "@context": {
+    "@vocab": "http://schema.org/",
+    "dc": "http://purl.org/dc/terms/",
+    "url": {"@type": "@id"},
+    "comment": {"@language": "en"},
+    "dateCreated": {"@id": "dc:created", "@type": "Date"},
+    "creatorOf": {"@reverse": "creator"}
+  },
+  "@id": "/someone",
+  "creatorOf": [
+    {
+      "@id": "/item",
+      "@type": "CreativeWork",
+      "name": "Item",
+      "comment": "An item.",
+      "dateCreated": "2016-11-01",
+      "url": "/item"
+    }
+  ]
+}
