@@ -34,7 +34,7 @@
     "xmldom": false
   },
   "devDependencies": {
-    "pegjs": "^0.9.0",
+    "pegjs": "^0.10.0",
     "tape": "^4.0.0"
   },
   "files": [
@@ -44,7 +44,7 @@
   "main": "lib/index.js",
   "bin": "bin/ldtr",
   "scripts": {
-    "peg": "pegjs src/parsers/trig.pegjs lib/trig/parser.js",
+    "peg": "pegjs -o lib/trig/parser.js --format umd --export-var LDTRTrigParser --optimize size src/parsers/trig.pegjs",
     "test": "tape 'test/test_*.js'"
   }
 }
