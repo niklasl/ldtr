@@ -1,0 +1,60 @@
+[
+  {
+    "@type": [
+      "http://schema.org/MusicEvent"
+    ],
+    "http://schema.org/startDate": [
+      {
+        "@value": "1997-06-02",
+        "@type": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ],
+    "http://schema.org/location": [
+      {
+        "@id": "#london"
+      }
+    ],
+    "http://schema.org/name": [
+      {
+        "@value": "Earthling Concert"
+      }
+    ],
+    "http://schema.org/image": [
+      {
+        "@id": "earthling.jpg"
+      },
+      {
+        "@id": "bowie.jpg"
+      }
+    ]
+  },
+  {
+    "@type": [
+      "http://schema.org/MusicEvent"
+    ],
+    "http://schema.org/startDate": [
+      {
+        "@value": "1997-06-14",
+        "@type": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ],
+    "http://schema.org/location": [
+      {
+        "@id": "#paris"
+      }
+    ],
+    "http://schema.org/name": [
+      {
+        "@value": "Earthling Concert"
+      }
+    ],
+    "http://schema.org/image": [
+      {
+        "@id": "earthling.jpg"
+      },
+      {
+        "@id": "bowie.jpg"
+      }
+    ]
+  }
+]

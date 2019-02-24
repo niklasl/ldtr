@@ -1,0 +1,18 @@
+prefix rdfa: <http://www.w3.org/ns/rdfa#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix : <http://schema.org/>
+
+<#concert> a rdfa:Pattern ;
+    :name "Earthling Concert" ;
+    :image <earthling.jpg>, <bowie.jpg> .
+
+[] a :MusicEvent ;
+    rdfa:copy <#concert> ;
+    :startDate "1997-06-02"^^xsd:date ;
+    :location <#london> .
+
+[] a :MusicEvent ;
+    rdfa:copy <#concert> ;
+    :startDate "1997-06-14"^^xsd:date ;
+    :location <#paris> .
+
