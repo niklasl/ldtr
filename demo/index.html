@@ -60,13 +60,15 @@
   <div class="status"></div>
 </section>
 
-<script>var module = {};</script>
+<script src="../lib/browser.js"></script>
+<script src="../lib/xhtreqreader.js"></script>
 <script src="../lib/trig/parser.js"></script>
-<script>var trig = module.exports;</script>
 <script src="../lib/rdfxml/parser.js"></script>
+<!--
 <script src="../lib/rdfa/contexts.js"></script>
 <script src="../lib/rdfa/walker.js"></script>
 <script src="../lib/rdfa/parser.js"></script>
+-->
 <script src="visualizer.js"></script>
 <script>
 
@@ -94,54 +96,31 @@
       this.loadData(params.url);
     },
 
-    loadData: function (url, realUrl) {
+    loadData: function (url) {
       if (!url) return;
 
-      var xhtreq = new XMLHttpRequest();
-      xhtreq.open('GET', url);
-      xhtreq.setRequestHeader('Accept', this.accepts);
-      xhtreq.onreadystatechange = function () {
-        if (xhtreq.readyState !== XMLHttpRequest.DONE) {
-          if (xhtreq.readyState === XMLHttpRequest.LOADING) return;
-          if (xhtreq.getResponseHeader('Content-Type').match(/\/(\w+\+)?(x|x?ht)ml/)) {
-            xhtreq.responseType = 'document';
+      LDTR.Reader.parse().then(
+        (data, base, contentType) => {
+          this.parseAndValidate(data, url);
+          // force browser to recognize dynamically generated :target
+          if (window.location.hash) {
+            window.location = window.location.hash;
           }
+        },
+        e => {
+          if (!e.location)
+            throw e;
+          this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
+            +' Col: '+ e.location.start.column +'\n'+ e.message;
           return;
         }
-        if (xhtreq.status === 0 && !realUrl) {
-          var corsUrl = this.corsResolver + url;
-          console.log("Failed CORS, retrying with " + corsUrl);
-          this.loadData(corsUrl, url);
-          return;
-        }
-        if (xhtreq.status !== 200) {
-          console.log("Failed HTTP request:", xhtreq);
-          return;
-        }
-        this.parseAndValidate(xhtreq, realUrl || url);
-        // NOTE: force browser to recognize dynamically generated :target
-        if (window.location.hash) {
-          window.location = window.location.hash;
-        }
-      }.bind(this);
-      xhtreq.send('');
+      )
     },
 
-    parseAndValidate: function (xhtreq, url) {
-      var data = null;
-      var contentType = 'text/turtle';
+    parseAndValidate: function (data, url, mediaType) {
+      if (mediaType.match(/xml/)) return;
 
-      if (xhtreq) {
-        contentType = xhtreq.getResponseHeader('Content-Type').replace(/;.*/, '');
-        if (xhtreq.responseType === 'document') {
-          data = xhtreq.responseXML;
-        } else {
-          data = this.editorArea.value = xhtreq.responseText;
-        }
-      } else {
-        data = this.editorArea.value;
-      }
-
+      this.editorArea.value = data;
       var pos = this.editorArea.selectionStart;
       var row = 1;
       var col = 1;
@@ -154,43 +133,9 @@
         }
       }
       this.statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n';
+      this.statusDiv.innerText += "OK";
 
-      var parse = this[contentType];
-      try {
-        var result = parse.call(this, data, url);
-        this.statusDiv.innerText += "OK";
-      } catch (e) {
-        if (!e.location)
-          throw e;
-        this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
-          +' Col: '+ e.location.start.column +'\n'+ e.message;
-        return;
-      }
-      visualize(this.viewDiv, result);
-    },
-
-    corsResolver: 'http://cors.io/?u=',
-
-    accepts: ['text/turtle', 'text/trig;q=0.9',
-      'application/rdf+xml;q=0.8', 'text/xml;q=0.7',
-      'text/html;q=0.6'].join(', '),
-
-    'text/trig': function (text) {
-      return trig.parse(text);
-    },
-
-    'text/turtle': function () {
-      return this['text/trig'].apply(this, arguments);
-    },
-
-    'application/ld+json': JSON.parse.bind(JSON),
-
-    'application/rdf+xml': function (doc) {
-      return RdfXmlParser.parse(doc, new XMLSerializer());
-    },
-
-    'text/html': function (doc, url) {
-      return RDFaJSONLDParser.parse(doc, url, {compact: true});
+      visualize(this.viewDiv, data);
     }
 
   };
