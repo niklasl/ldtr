@@ -3,9 +3,11 @@ const fs = require('fs')
 const rdfxmlParser = require('../lib/rdfxml/parser')
 const xmldom = require('xmldom')
 
+global.XMLSerializer = xmldom.XMLSerializer
+
 let datadir = __dirname + '/data'
 
-tape.test('', t => {
+tape.test('parse rdfxml', t => {
   let xmlStr = fs.readFileSync(datadir + '/misc.rdf', 'utf-8')
   let result = rdfxmlParser.parse(
     new xmldom.DOMParser().parseFromString(xmlStr, 'text/xml'),
