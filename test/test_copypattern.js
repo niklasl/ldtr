@@ -11,7 +11,7 @@ let datafile = pth => path.join(__dirname, 'data', pth)
 
 tape.test('pattern copy', t => {
   parse(datafile('copypattern.ttl')).then(data => {
-    let graphIndex = index(expand({}, data))
+    let graphIndex = index(expand({}, data)).byId
     expandPatterns(graphIndex)
     let result = Object.values(graphIndex)
     for (let item of result) {
