@@ -152,7 +152,7 @@
     },
     {
       "@id": "http://example.net/vocab/",
-      "[object Object]": {
+      "": {
         "@id": "http://example.net/vocab/"
       }
     },

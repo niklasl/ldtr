@@ -257,10 +257,7 @@ objectList =
 verb =
     IGNORE verb:(predicate / 'a' {return '@type'; } ) IGNORE
     {
-        var id = verb['@id'];
-        if (id)
-            return id;
-        return verb;
+        return typeof verb === 'object' ? verb['@id'] || '' : verb;
     }
 
 subject = iri / blank
