@@ -60,17 +60,11 @@
   <div class="status"></div>
 </section>
 
-<script src="../lib/browser.js"></script>
-<script src="../lib/xhtreqreader.js"></script>
-<script src="../lib/trig/parser.js"></script>
-<script src="../lib/rdfxml/parser.js"></script>
-<!--
-<script src="../lib/rdfa/contexts.js"></script>
-<script src="../lib/rdfa/walker.js"></script>
-<script src="../lib/rdfa/parser.js"></script>
--->
 <script src="visualizer.js"></script>
-<script>
+<script type="module">
+
+  import {read} from '../lib/xhtreqreader.js'
+  import * as reader from '../lib/reader.js'
 
   var ldtrDemo = {
 
@@ -99,9 +93,14 @@
     loadData: function (url) {
       if (!url) return;
 
-      LDTR.Reader.parse().then(
-        (data, base, contentType) => {
-          this.parseAndValidate(data, url);
+      read(url, reader.getHeaders().accept).then(
+        async (result) => {
+          let {data, url, contentType} = result
+          this.editorArea.value = data;
+          this.editorArea.dataset.url = url;
+          this.editorArea.dataset.contentType = contentType;
+
+          await this.parseAndValidate();
           // force browser to recognize dynamically generated :target
           if (window.location.hash) {
             window.location = window.location.hash;
@@ -117,10 +116,16 @@
       )
     },
 
-    parseAndValidate: function (data, url, mediaType) {
-      if (mediaType.match(/xml/)) return;
+    parseAndValidate: async function () {
+      let url  = this.editorArea.dataset.url
+      let contentType = this.editorArea.dataset.contentType
+      let data = this.editorArea.value
 
-      this.editorArea.value = data;
+      if (contentType && contentType.match(/xml/)) return;
+
+      let transcriber = reader.transcribers[contentType]
+      let result = await transcriber(data, url, contentType)
+
       var pos = this.editorArea.selectionStart;
       var row = 1;
       var col = 1;
@@ -135,7 +140,7 @@
       this.statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n';
       this.statusDiv.innerText += "OK";
 
-      visualize(this.viewDiv, data);
+      visualize(this.viewDiv, result);
     }
 
   };
