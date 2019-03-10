@@ -28,23 +28,26 @@
   },
   "version": "0.3.0-snapshot",
   "dependencies": {
+    "esm": "^3.2.14",
     "xmldom": "^0.1.27"
   },
   "browser": {
+    "esm": false,
     "xmldom": false
   },
   "devDependencies": {
-    "pegjs": "^0.10.0",
-    "tape": "^4.0.0"
+    "pegjs": "^0.11.0-master.85dbe5a",
+    "tape": "^4.10.1"
   },
   "files": [
     "lib",
     "bin"
   ],
   "main": "lib/index.js",
+  "module": "lib/main.js",
   "bin": "bin/ldtr",
   "scripts": {
-    "peg": "pegjs -o lib/trig/parser.js --format umd --export-var LDTRTrigParser --optimize size src/parsers/trig.pegjs",
-    "test": "tape 'test/test_*.js'"
+    "peg": "pegjs -o lib/trig/parser.js --format es --optimize size src/parsers/trig.pegjs",
+    "test": "tape -r esm 'test/test_*.js'"
   }
 }
