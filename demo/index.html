@@ -69,49 +69,49 @@
   var ldtrDemo = {
 
     init: function () {
-      this.viewDiv = document.getElementById('view');
-      this.editorArea = document.querySelector('#edit > .editor');
-      this.statusDiv = document.querySelector('#edit > .status');
+      this.viewDiv = document.getElementById('view')
+      this.editorArea = document.querySelector('#edit > .editor')
+      this.statusDiv = document.querySelector('#edit > .status')
       this.editorArea.onkeyup = function () {
-        this.parseAndValidate();
-      }.bind(this);
+        this.parseAndValidate()
+      }.bind(this)
 
       var query = window.location.search.substring(1),
         params = query.split(/\&/).reduce(function (map, pair) {
-          var tuple = pair.split(/=/);
-          map[tuple[0]] = tuple[1];
-          return map;
-        }, {});
+          var tuple = pair.split(/=/)
+          map[tuple[0]] = tuple[1]
+          return map
+        }, {})
 
       if (!params.url || params.edit) {
-        document.body.classList.add('edit');
+        document.body.classList.add('edit')
       }
 
-      this.loadData(params.url);
+      this.loadData(params.url)
     },
 
     loadData: function (url) {
-      if (!url) return;
+      if (!url) return
 
       read(url, reader.getHeaders().accept).then(
         async (result) => {
           let {data, url, contentType} = result
-          this.editorArea.value = data;
-          this.editorArea.dataset.url = url;
-          this.editorArea.dataset.contentType = contentType;
+          this.editorArea.value = data
+          this.editorArea.dataset.url = url
+          this.editorArea.dataset.contentType = contentType
 
-          await this.parseAndValidate();
+          await this.parseAndValidate()
           // force browser to recognize dynamically generated :target
           if (window.location.hash) {
-            window.location = window.location.hash;
+            window.location = window.location.hash
           }
         },
         e => {
           if (!e.location)
-            throw e;
+            throw e
           this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
-            +' Col: '+ e.location.start.column +'\n'+ e.message;
-          return;
+            +' Col: '+ e.location.start.column +'\n'+ e.message
+          return
         }
       )
     },
@@ -121,30 +121,30 @@
       let contentType = this.editorArea.dataset.contentType
       let data = this.editorArea.value
 
-      if (contentType && contentType.match(/xml/)) return;
+      if (contentType && contentType.match(/xml/)) return
 
       let transcriber = reader.transcribers[contentType]
       let result = await transcriber(data, url, contentType)
 
-      var pos = this.editorArea.selectionStart;
-      var row = 1;
-      var col = 1;
+      var pos = this.editorArea.selectionStart
+      var row = 1
+      var col = 1
       for (var i=0; i < pos; i++) {
         if (data[i] === '\n') {
-          row += 1;
-          col = 1;
+          row += 1
+          col = 1
         } else {
-          col++;
+          col++
         }
       }
-      this.statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n';
-      this.statusDiv.innerText += "OK";
+      this.statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n'
+      this.statusDiv.innerText += "OK"
 
-      visualize(this.viewDiv, result);
+      visualize(this.viewDiv, result)
     }
 
-  };
+  }
 
-  window.onload = ldtrDemo.init();
+  window.onload = ldtrDemo.init()
 
 </script>
