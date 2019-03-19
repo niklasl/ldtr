@@ -1,9 +1,9 @@
 const tape = require('tape')
 const main = require('../lib/main')
 const ldcx = require('../lib/jsonld/algorithm')
+const {ID, TYPE, VALUE, REVERSE} = require('../lib/jsonld/keywords')
 const indexer = require('../lib/util/indexer')
 
-let {ID, TYPE, VALUE, REVERSE} = ldcx
 let SCHEMA = (t = '') => 'http://schema.org/' + t
 
 tape.test('index data', t => {
