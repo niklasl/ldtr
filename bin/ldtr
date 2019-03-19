@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 require = require("esm")(module)
 const cli = require('../lib/cli')
-if (require.main === module) cli()
+if (require.main === module) cli.default()
