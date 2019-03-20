@@ -48,6 +48,6 @@
   "bin": "bin/ldtr",
   "scripts": {
     "peg": "pegjs -o lib/trig/parser.js --format es --optimize size src/parsers/trig.pegjs",
-    "test": "tape -r esm 'test/test_*.js'"
+    "test": "tape -r esm 'test/test_*.js' && ./test/test_cli.sh > /dev/null && ./test/test-trig-serializer.sh > /dev/null"
   }
 }
