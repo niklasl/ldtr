@@ -7,7 +7,7 @@ const indexer = require('../lib/util/indexer')
 let SCHEMA = (t = '') => 'http://schema.org/' + t
 
 tape.test('index data', t => {
-  main.parse(__dirname + '/data/lotr.ttl').then(data => {
+  main.read(__dirname + '/data/lotr.ttl').then(data => {
     let index = indexer.index(ldcx.expand({}, data))
 
     let item = index.byId['http://dbpedia.org/resource/The_Fellowship_of_the_Ring']
