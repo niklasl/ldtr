@@ -63,8 +63,8 @@
 <script src="visualizer.js"></script>
 <script type="module">
 
-  import {read} from '../lib/xhtreqreader.js'
-  import * as reader from '../lib/reader.js'
+  import {readSource} from '../lib/xhtreqreader.js'
+  import * as transcribers from '../lib/transcribers.js'
 
   var ldtrDemo = {
 
@@ -93,12 +93,12 @@
     loadData: function (url) {
       if (!url) return
 
-      read(url, reader.getHeaders().accept).then(
+      readSource(url, transcribers.requestHeaders()).then(
         async (result) => {
-          let {data, url, contentType} = result
+          let {data, url, type} = result
           this.editorArea.value = data
           this.editorArea.dataset.url = url
-          this.editorArea.dataset.contentType = contentType
+          this.editorArea.dataset.type = type
 
           await this.parseAndValidate()
           // force browser to recognize dynamically generated :target
@@ -117,14 +117,14 @@
     },
 
     parseAndValidate: async function () {
-      let url  = this.editorArea.dataset.url
-      let contentType = this.editorArea.dataset.contentType
+      let url = this.editorArea.dataset.url
+      let type = this.editorArea.dataset.type
       let data = this.editorArea.value
 
-      if (contentType && contentType.match(/xml/)) return
+      if (type && type.match(/xml/)) return
 
-      let transcriber = reader.transcribers[contentType]
-      let result = await transcriber(data, url, contentType)
+      let transcribe = transcribers.transcribers[type]
+      let result = await transcribe({data, base: url, type})
 
       var pos = this.editorArea.selectionStart
       var row = 1
