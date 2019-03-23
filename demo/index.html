@@ -90,30 +90,28 @@
       this.loadData(params.url)
     },
 
-    loadData: function (url) {
+    loadData: async function (url) {
       if (!url) return
 
-      readSource(url, transcribers.requestHeaders()).then(
-        async (result) => {
-          let {data, url, type} = result
-          this.editorArea.value = data
-          this.editorArea.dataset.url = url
-          this.editorArea.dataset.type = type
+      let headers = transcribers.requestHeaders()
+      let { data, type } = await readSource(url, headers)
+      this.editorArea.value = data
+      this.editorArea.dataset.url = url
+      this.editorArea.dataset.type = type
 
-          await this.parseAndValidate()
-          // force browser to recognize dynamically generated :target
-          if (window.location.hash) {
-            window.location = window.location.hash
-          }
-        },
-        e => {
-          if (!e.location)
-            throw e
-          this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
-            +' Col: '+ e.location.start.column +'\n'+ e.message
-          return
+      try {
+        await this.parseAndValidate()
+        // force browser to recognize dynamically generated :target
+        if (window.location.hash) {
+          window.location = window.location.hash
         }
-      )
+      } catch (e) {
+        if (!e.location)
+          throw e
+        this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
+          +' Col: '+ e.location.start.column +'\n'+ e.message
+        return
+      }
     },
 
     parseAndValidate: async function () {
