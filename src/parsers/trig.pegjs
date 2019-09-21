@@ -67,7 +67,7 @@
                         existing = [existing];
                     }
                     if (Array.isArray(value)) {
-                        existing.concat(value);
+                        existing = existing.concat(value);
                     } else {
                         existing.push(value);
                     }
