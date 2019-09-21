@@ -116,7 +116,7 @@
 
     parseAndValidate: async function () {
       let url = this.editorArea.dataset.url
-      let type = this.editorArea.dataset.type
+      let type = this.editorArea.dataset.type || 'text/trig'
       let data = this.editorArea.value
 
       if (type && type.match(/xml/)) return
