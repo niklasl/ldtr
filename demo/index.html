@@ -99,18 +99,10 @@
       this.editorArea.dataset.url = url
       this.editorArea.dataset.type = type
 
-      try {
-        await this.parseAndValidate()
-        // force browser to recognize dynamically generated :target
-        if (window.location.hash) {
-          window.location = window.location.hash
-        }
-      } catch (e) {
-        if (!e.location)
-          throw e
-        this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
-          +' Col: '+ e.location.start.column +'\n'+ e.message
-        return
+      await this.parseAndValidate()
+      // force browser to recognize dynamically generated :target
+      if (window.location.hash) {
+        window.location = window.location.hash
       }
     },
 
@@ -122,7 +114,16 @@
       if (type && type.match(/xml/)) return
 
       let transcribe = transcribers.transcribers[type]
-      let result = await transcribe({data, base: url, type})
+      let result
+      try {
+        result = await transcribe({data, base: url, type})
+      } catch (e) {
+        if (!e.location)
+          throw e
+        this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
+          +' Col: '+ e.location.start.column +'\n'+ e.message
+        return
+      }
 
       var pos = this.editorArea.selectionStart
       var row = 1
