@@ -1,14 +1,21 @@
 # LDTR
 
-*A [Linked Data](http://linkeddata.org/) Transcriber.*
+*A [Linked Data](https://www.w3.org/wiki/LinkedData) (as in [RDF](https://www.w3.org/RDF/)) Transcriber.*
+
+* [Source Code on GitHub](https://github.com/niklasl/ldtr).
+* [Demo Web Application](https://niklasl.github.io/ldtr/demo/?url=../test/data/lotr.ttl&edit=true)
+  for visualization, format conversion and light editing.
 
 ----
 
 * [Intro](#intro)
+* [Input Formats](#input-formats)
+* [Output Forms and Formats](#output-forms-and-formats)
 * [Install](#install)
-* [Command Line](#command-line)
-* [Supported Formats](#supported-formats)
-* [Code](#code)
+* [Command Line Usage](#command-line-usage)
+* [Library Usage](#library-usage)
+* [Internals](#internals)
+* [Rationale](#rationale)
 
 ----
 
@@ -30,7 +37,7 @@ This tool strives to be usable both in the browser, on the command line and on
 the server (mainly NodeJS). It is built using modern JS and ES modules, along
 with some minimal provisioning for different runtimes.
 
-## Supported Input Formats
+## Input Formats
 
 * [TriG](https://www.w3.org/TR/trig/) (and its subsets
   [Turtle](https://www.w3.org/TR/turtle/) and
@@ -40,6 +47,9 @@ with some minimal provisioning for different runtimes.
 
 * All the old [RDF/XML](https://www.w3.org/TR/rdf-syntax-grammar/) out there on
   the web.
+
+* While [JSON-LD](http://www.w3.org/TR/json-ld/) is the *output* format, this
+  tool can of course either pass it through, or expand it and act upon that.
 
 ## Output Forms and Formats
 
@@ -61,6 +71,8 @@ and fidelity.)
 
 ## Command Line Usage
 
+Examples:
+
     $ ldtr RDF_FILE_OR_URL
 
     $ cat TURTLE_FILE | ldtr
@@ -69,7 +81,23 @@ and fidelity.)
 
     $ ldtr RDF_FILE_OR_URL -o trig
 
-    $ ldtr -h
+CLI options:
+```
+ $ ldtr -h
+
+Usage: ldtr [options] [arguments]
+
+Options:
+  -t, --type		TYPE		Media type or file suffix
+  -b, --base		BASE		Base URL if different from input URL
+  -e, --expand		false		Expand JSON-LD
+  -i, --index		false		Index on keys, types and reverses
+  -p, --pattern		false		Use RDFa pattern copying
+  -o, --output		OUTPUT		Media type or file suffix
+      --max-redirects	MAX-REDIRECTS	
+  -v, --verbose		false		
+  -h, --help		false		
+```
 
 ## Library Usage
 
@@ -80,6 +108,9 @@ file with a common suffix).
 For text-based formats, the input is expected to be a regular string. For XML-
 and HTML-based formats, the input can also be a DOM Document. (Any W3C XML DOM
 Level 2 Core compliant DOMParser and XMLSerializer will do.
+
+In a browser, you can use the internals by themselves. See the demo web
+application for an example of how.
 
 Parsing:
 
