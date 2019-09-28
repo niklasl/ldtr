@@ -1,25 +1,18 @@
 # LDTR
 
-*A [Linked Data](https://www.w3.org/wiki/LinkedData) (as in [RDF](https://www.w3.org/RDF/)) Transcriber.*
+*A [Linked Data](https://www.w3.org/wiki/LinkedData)
+(as in [RDF](https://www.w3.org/RDF/)) Transcriber.*
 
-* [Source Code on GitHub](https://github.com/niklasl/ldtr).
-* [Demo Web Application](https://niklasl.github.io/ldtr/demo/?url=../test/data/lotr.ttl&edit=true)
-  for visualization, format conversion and light editing.
+Try out the [Demo Web Application](https://niklasl.github.io/ldtr/demo/?url=../test/data/lotr.ttl&edit=true)
+for visualization, format conversion and light editing.
 
-----
+Install the [NPM Package](https://www.npmjs.com/package/ldtr).
 
-* [Intro](#intro)
-* [Input Formats](#input-formats)
-* [Output Forms and Formats](#output-forms-and-formats)
-* [Install](#install)
-* [Command Line Usage](#command-line-usage)
-* [Library Usage](#library-usage)
-* [Internals](#internals)
-* [Rationale](#rationale)
+Check out the [Source Code on GitHub](https://github.com/niklasl/ldtr).
 
 ----
 
-## Intro
+## About
 
 LDTR turns various representations of
 [RDF](https://www.w3.org/TR/rdf11-primer/)
@@ -30,12 +23,21 @@ LDTR works by *transcribing* the input syntax verbatim into a valid JSON-LD
 structure that represents the same RDF. **Only use output from this tool
 directly when input is strictly under your control.** In any other case, LDTR
 includes a JSON-LD expansion implementation, to turn the data into a
-normalized, fully predicable RDF data representation. Use this if you want to
+normalized, fully predicable RDF data representation. Use that if you want to
 use LDTR for general RDF data processing.
 
 This tool strives to be usable both in the browser, on the command line and on
 the server (mainly NodeJS). It is built using modern JS and ES modules, along
 with some minimal provisioning for different runtimes.
+
+* [Input Formats](#input-formats)
+* [Output Forms and Formats](#output-forms-and-formats)
+* [Install](#install)
+* [Command Line Usage](#command-line-usage)
+* [Library Usage](#library-usage)
+* [Internals](#internals)
+* [Rationale](#rationale)
+
 
 ## Input Formats
 
@@ -49,7 +51,8 @@ with some minimal provisioning for different runtimes.
   the web.
 
 * While [JSON-LD](http://www.w3.org/TR/json-ld/) is the *output* format, this
-  tool can of course either pass it through, or expand it and act upon that.
+  tool can of course either pass data through verbatim, or expand it and act
+  upon that.
 
 ## Output Forms and Formats
 
