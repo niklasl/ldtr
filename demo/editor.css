@@ -1,0 +1,90 @@
+@import url('./visualizer.css');
+@import url('./arrows.css');
+
+@media print {
+  #view {
+    position: static !important;
+  }
+  #edit, menu {
+    display: none;
+  }
+  article.card {
+    page-break-inside: avoid;
+  }
+}
+
+#view {
+  font-family: verdana;
+  font-size: 12px;
+  color: #000;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  padding: 1em 1.5em;
+}
+
+body.edit #view {
+  right: 50%;
+}
+
+#edit {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+  overflow: auto;
+  visibility: hidden;
+}
+
+body.edit #edit {
+  visibility: visible;
+  background-color: #eee;
+  box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.4);
+  padding: 0.2em;
+}
+
+#editor {
+  visibility: hidden;
+  font-family: Courier;
+  font-size: 12px;
+  width: 99%;
+  height: 90%;
+}
+
+body.edit #editor {
+  visibility: visible;
+}
+
+#view article.card {
+  float: left;
+  overflow: auto;
+}
+body.edit #view article.card {
+  float: none;
+  max-height: inherit;
+  overflow: auto;
+}
+
+#status {
+  padding: 0 1em;
+  z-index: 1;
+  color: #888;
+}
+#status.error {
+  background-color: #ffe;
+  color: #b05;
+}
+
+menu {
+  margin: 0;
+  padding: 0 1em;
+}
+button#toggleedit {
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+}

@@ -1,4 +1,3 @@
-
 .card .card {
   margin-left: 2em;
 }
@@ -13,7 +12,7 @@ article.card {
   border: 1px solid #aaa;
   border-radius: 3px;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
-  padding: 0.5em;
+  /*padding: 0.5em;*/
   min-width: 32em;
   max-width: 48em;
   overflow: visible;
@@ -22,7 +21,7 @@ article.card {
 article.card:hover {
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6);
 }
-article.card:target {
+article.card:target, article.card.selected {
   background-color: #eff;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
 }
@@ -51,15 +50,10 @@ article.card.term {
   background-color: rgba(200, 242, 255, 0.8);
 }
 
-.card input {
-  font-size: inherit;
-  border: 1px solid #eee;
-  background-color: inherit;
-}
-
-.card > header {
+article.card > header {
   overflow: overlay;
   overflow: hidden;
+  margin: 0.5em 0.5em 0;
 }
 
 .card > header > b {
@@ -75,13 +69,23 @@ article.card.term {
 .card > header > a.id:before { content: "<"; }
 .card > header > a.id:after { content: ">"; }
 
-.card p {
-  margin: 0.4em 0;
+article.card > div {
+  margin: 0 0.5em;
+}
+
+article.card p {
+  margin: 0.4em 0.5em;
 }
 
 .card div > b,
 .card p > b {
   color: #4a8;
+}
+
+.card input {
+  font-size: inherit;
+  border: 1px solid #eee;
+  background-color: inherit;
 }
 
 .card a.ref {
@@ -95,7 +99,7 @@ article.card.term {
   text-decoration: none;
 }
 
-.card a.ref:hover {
+.card a.ref:hover, .card a.ref.selected {
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
@@ -126,4 +130,11 @@ article.card.term {
   border: 1px solid #48c;
   background-color: #fafaff;
   font-weight: bold;
+}
+
+.card aside.rev {
+  background-color: #eee;
+  margin: 0;
+  padding: 0.5em;
+  border-top: 0.2em ridge;
 }

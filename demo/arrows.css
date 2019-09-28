@@ -1,0 +1,51 @@
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+path.arrow {
+  fill: none;
+  stroke-width: 2;
+  stroke: rgba(127, 127, 127, 0.05);
+  transition: stroke 0.6s;
+  marker-end: url(#arrowhead);
+}
+#arrowhead {
+  fill: rgba(127, 127, 127, 0.2);
+}
+
+path.arrow.rev {
+  stroke: #b05;
+  marker-end: url(#arrowhead-rev);
+}
+#arrowhead-rev {
+  fill: #b05;
+}
+
+path.arrow.rel {
+  stroke: #4a8;
+  marker-end: url(#arrowhead-rel);
+}
+#arrowhead-rel {
+  fill: #4a8;
+}
+
+span.arrow {
+  position: absolute;
+  color: #b05;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0em 0.8em;
+  border: 1px solid #b05;
+  border-radius: 12px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.6s;
+  cursor: pointer;
+}
+span.arrow.rev {
+  opacity: 1;
+}
