@@ -88,15 +88,15 @@ CLI options:
 Usage: ldtr [options] [arguments]
 
 Options:
-  -t, --type		TYPE		Media type or file suffix
-  -b, --base		BASE		Base URL if different from input URL
-  -e, --expand		false		Expand JSON-LD
-  -i, --index		false		Index on keys, types and reverses
-  -p, --pattern		false		Use RDFa pattern copying
-  -o, --output		OUTPUT		Media type or file suffix
-      --max-redirects	MAX-REDIRECTS	
-  -v, --verbose		false		
-  -h, --help		false		
+  -t, --type TYPE               Media type or file suffix
+  -b, --base BASE               Base URL if different from input URL
+  -e, --expand                  Expand JSON-LD
+  -i, --index                   Index on keys, types and reverses
+  -p, --pattern                 Use RDFa pattern copying
+  -o, --output OUTPUT           Media type or file suffix
+      --max-redirects NUMBER
+  -v, --verbose
+  -h, --help
 ```
 
 ## Library Usage
