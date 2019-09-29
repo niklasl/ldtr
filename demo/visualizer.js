@@ -22,7 +22,11 @@ export function visualize(elem, result, params = {}) {
 
   showContext(out, context)
 
-  let nodes = result[GRAPH]
+  let nodes = result
+  if (!Array.isArray(result)) {
+    nodes = result[GRAPH] || result
+  }
+  if (!Array.isArray(nodes)) nodes = [nodes]
 
   if (typeof result.byId === 'object' &&
     typeof context.byId === 'object' &&
