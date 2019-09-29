@@ -33,7 +33,7 @@ export function renderArrows(container) {
     })
   })
 
-  document.querySelectorAll('a.ref').forEach(link => {
+  document.querySelectorAll('.card a.ref').forEach(link => {
     let idx = link.href.indexOf('#')
     let targetId = link.href.substring(idx + 1)
     let target = document.getElementById(targetId)

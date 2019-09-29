@@ -40,7 +40,7 @@ export function visualize(elem, result, params = {}) {
 function showContext(out, context) {
   if (typeof context !== 'object') return
 
-  out('<div class="context card">')
+  out('<div class="context">')
   for (var key in context) {
     var value = context[key]
     if (typeof value === 'string') {
