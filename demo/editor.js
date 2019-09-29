@@ -54,7 +54,9 @@ var ldtrEditor = {
       }
     })
 
-    this.loadData(decodeURIComponent(this.params.url))
+    if (this.params.url) {
+      this.loadData(decodeURIComponent(this.params.url))
+    }
   },
 
   parseParams: function (query) {
