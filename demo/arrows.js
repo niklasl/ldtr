@@ -39,14 +39,19 @@ export function renderArrows(container) {
     let target = document.getElementById(targetId)
     if (!target) return
 
+    let card = link.closest('[id].card')
+
     let arrow = document.createElementNS(SVGNS, 'path')
     arrow.classList.add('arrow')
 
-    let arrowLabel = document.createElement('span')
-    arrowLabel.classList.add('arrow')
+    let arrowLabel
     let label = link.closest('article > p, div > p, div').querySelector('b')
     if (label) {
-      arrowLabel.textContent = label.textContent
+      arrowLabel = document.createElement('span')
+      arrowLabel.classList.add('arrow')
+      arrowLabel.appendChild(label.cloneNode(true))
+      let targetRef = card.querySelector('a.id').cloneNode(true)
+      arrowLabel.appendChild(targetRef)
       container.appendChild(arrowLabel)
     }
 
@@ -93,7 +98,7 @@ export function renderArrows(container) {
       let labelX = tgtX - ((tgtX-linkX) * 0.1)
       let labelY = tgtY - ((tgtY-linkY) * 0.1)
 
-      if (label) {
+      if (arrowLabel) {
         arrowLabel.style.left = `${labelX}px`
         arrowLabel.style.top = `${labelY}px`
       }
@@ -102,7 +107,7 @@ export function renderArrows(container) {
     computePaths.push(computePath)
 
     link.addEventListener('click', evt => {
-      linkOwner.classList.remove('selected')
+      card.classList.remove('selected')
       link.classList.toggle('selected')
       evt.stopPropagation()
       evt.preventDefault()
@@ -113,41 +118,43 @@ export function renderArrows(container) {
       })
       target.classList.add('selected')
     })
-    let linkOwner = link.closest('[id].card')
-    linkOwner.addEventListener('mouseover', evt => {
+
+    card.addEventListener('mouseover', evt => {
       arrow.classList.add('rel')
     })
-    linkOwner.addEventListener('mouseout', evt => {
-      if (linkOwner.classList.contains('selected')) return
+    card.addEventListener('mouseout', evt => {
+      if (card.classList.contains('selected')) return
       arrow.classList.remove('rel')
     })
 
     target.addEventListener('mouseover', evt => {
       arrow.classList.add('rev')
-      if (label) arrowLabel.classList.add('rev')
+      if (arrowLabel) arrowLabel.classList.add('rev')
     })
     target.addEventListener('mouseout', evt => {
       if (target.classList.contains('selected')) return
       arrow.classList.remove('rev')
-      if (label) arrowLabel.classList.remove('rev')
+      if (arrowLabel) arrowLabel.classList.remove('rev')
     })
 
-    if (label) {
+    if (arrowLabel) {
       arrowLabel.addEventListener('mouseover', evt => {
         arrow.classList.add('rev')
-        if (label) arrowLabel.classList.add('rev')
+        arrowLabel.classList.add('rev')
       })
       arrowLabel.addEventListener('mouseout', evt => {
         if (target.classList.contains('selected')) return
         arrow.classList.remove('rev')
-        if (label) arrowLabel.classList.remove('rev')
+        arrowLabel.classList.remove('rev')
       })
       arrowLabel.addEventListener('click', evt => {
         target.classList.remove('selected')
-        linkOwner.classList.add('selected')
+        card.classList.add('selected')
+        evt.stopPropagation()
+        evt.preventDefault()
         container.scrollTo({
-          left: linkOwner.offsetLeft,
-          top: linkOwner.offsetTop,
+          left: card.offsetLeft,
+          top: card.offsetTop,
           behavior: 'smooth'
         })
       })
