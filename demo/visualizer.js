@@ -72,14 +72,13 @@ function showNode(out, node, embedded) {
   }
   showType(out, node)
   out('</header>')
+  showContents(out, node)
   if (graph) {
     if (Array.isArray(graph)) {
       for (var it of graph) {
         showNode(out, it)
       }
     }
-  } else {
-    showContents(out, node)
   }
   let revs = node[REVERSE]
   if (revs) {
