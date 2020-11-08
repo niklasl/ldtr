@@ -88,8 +88,12 @@ function showNode(out, node, embedded) {
 }
 
 function showType(out, node) {
-  if (node[TYPE])
-    out('<b>'+ node[TYPE] +'</b>')
+  if (node[TYPE] == null) return
+  let types = node[TYPE]
+  if (!Array.isArray(types)) types = [types]
+  for (let type of types) {
+    out('<b>'+ type +'</b>')
+  }
 }
 
 function showContents(out, node, inArray) {
