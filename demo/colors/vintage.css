@@ -1,0 +1,46 @@
+#view {
+  color: #000;
+}
+
+article.card { background-color: #fff;
+  border: 1px solid #aaa;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3); }
+article.card:hover { box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6); }
+article.card:target, article.card.selected { background-color: #fbf8e8;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4); }
+
+article.card.graph { background-color: #fafafa;
+  border: 1px dashed #aaa; }
+article.card.graph > header > a { color: #aaa; }
+
+article.card.embedded { border: 1px solid #36b;
+  background-color: rgba(200, 242, 255, 0.8); }
+
+article.card.term { background-color: rgba(200, 242, 255, 0.8); }
+
+.card > header > b { color: #640; }
+.card div > b, .card p > b { color: #044; }
+
+.card > header > a.id, a.ref { color: #601; }
+a.ref { background-color: #ffe;
+  border: 1px solid #601;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2); }
+a.ref:hover, a.ref.selected { box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4); }
+
+span.arrow { color: #676f6f; border: 1px solid #676f6f; }
+span.arrow > a.id { color: #601; }
+path.arrow.rev { stroke: rgb(103, 111, 111, 0.6); }
+#arrowhead-rev { fill: rgb(103, 111, 111, 0.6); }
+path.arrow.rel { stroke: #601; }
+#arrowhead-rel { fill: #601; }
+
+.card .datatype { color: #333;
+  background-color: #fafafa;
+  border: 1px solid #aaa; }
+
+.context b.pfx { color: #999; }
+.context a.ref { color: #888;
+  background-color: #eee;
+  border: 1px solid #888; }
+
+.card aside.rev { background-color: #eee; }

@@ -1,0 +1,140 @@
+
+#view {
+  color: #000;
+}
+
+body.edit #edit {
+  background-color: #eee;
+  box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.4);
+}
+
+#status {
+  color: #888;
+}
+#status.error {
+  background-color: #ffe;
+  color: #b05;
+}
+
+article.card {
+  background-color: #fff;
+  border: 1px solid #aaa;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
+}
+article.card:hover {
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6);
+}
+article.card:target, article.card.selected {
+  background-color: #eff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+article.card.graph {
+  background-color: #fafafa;
+  border: 1px dashed #aaa;
+}
+
+article.card.graph > header > a {
+  color: #aaa;
+}
+
+article.card.embedded {
+  border: 1px solid #36b;
+  background-color: rgba(200, 242, 255, 0.8);
+}
+
+article.card.term {
+  background-color: rgba(200, 242, 255, 0.8);
+}
+
+.card > header > b {
+  color: #48c;
+}
+
+.card > header > a.id {
+  color: #b05;
+}
+
+.card div > b,
+.card p > b {
+  color: #4a8;
+}
+
+.card input {
+  border: 1px solid #eee;
+}
+
+a.ref {
+  color: #b05;
+  background-color: #ffe;
+  border: 1px solid #b05;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+a.ref:hover, a.ref.selected {
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.context b.pfx {
+  color: #999;
+}
+
+.context a.ref {
+  color: #888;
+  background-color: #eee;
+  border: 1px solid #888;
+}
+
+.card .lang,
+.card .datatype {
+  color: #333;
+  background-color: #fafafa;
+  border: 1px solid #aaa;
+}
+.card .datatype {
+  color: #48c;
+  border: 1px solid #48c;
+  background-color: #fafaff;
+}
+
+.card aside.rev {
+  background-color: #eee;
+}
+
+path.arrow {
+  stroke: rgba(127, 127, 127, 0.05);
+  marker-end: url(#arrowhead);
+}
+#arrowhead {
+  fill: rgba(127, 127, 127, 0.2);
+}
+
+path.arrow.rev {
+  stroke: rgb(68, 136, 204, 0.6);
+  marker-end: url(#arrowhead-rev);
+}
+#arrowhead-rev {
+  fill: rgb(68, 136, 204, 0.6);
+}
+
+path.arrow.rel {
+  stroke: #b05;
+  marker-end: url(#arrowhead-rel);
+}
+#arrowhead-rel {
+  fill: #b05;
+}
+
+span.arrow {
+  color: #48c;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #48c;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6);
+}
+span.arrow:hover {
+  background-color: #fff;
+}
+
+span.arrow > a.id {
+  color: #b05;
+}
