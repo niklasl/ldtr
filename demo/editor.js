@@ -95,7 +95,8 @@ var ldtrEditor = {
 
   parseData: async function () {
     let data = this.editorArea.value
-    let type = this.typeSelect.options[this.typeSelect.selectedIndex].value
+    let index = this.typeSelect.selectedIndex
+    let type = this.typeSelect.options[index > -1 ? index : 0].value
     let url = this.urlInput.value
     let transcribe = transcribers.transcribers[type]
     return await transcribe({data, type, base: url})
