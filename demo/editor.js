@@ -1,5 +1,6 @@
 import {readSource} from '../lib/xhtreqreader.js'
 import * as transcribers from '../lib/transcribers.js'
+import { guessMediaType }  from '../lib/mediatypes.js'
 import {visualize} from './visualizer.js'
 import {renderArrows} from './arrows.js'
 
@@ -77,6 +78,9 @@ var ldtrEditor = {
       data = data.documentElement.outerHTML
     }
     this.urlInput.value = url
+    if (!(type in transcribers.transcribers)) {
+      type = guessMediaType(url)
+    }
     this.setData(data, type)
 
     await this.parseAndProcess()
