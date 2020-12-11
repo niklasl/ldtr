@@ -1,5 +1,11 @@
 #view {
+  background-color: #fffefa;
   color: #000;
+}
+
+#editor {
+  background-color: #ffe;
+  color: #014;
 }
 
 article.card { background-color: #fff;
