@@ -29,7 +29,7 @@
   "version": "0.3.2-snapshot",
   "dependencies": {
     "esm": "^3.2.14",
-    "xmldom": "^0.1.27"
+    "xmldom": "^0.6.0"
   },
   "browser": {
     "esm": false,
