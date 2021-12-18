@@ -126,13 +126,13 @@ let data
 data = await ldtr.read('some-data.trig')
 
 // Supply file path and type
-data = await ldtr.read('some-data.trig', 'text/trig')
+data = await ldtr.read('some-data.trig', 'application/trig')
 
 // Supply URL and use respone content-type
 data = await ldtr.read('http://www.w3.org/1999/02/22-rdf-syntax-ns')
 
 // Supply URL and type
-data = await ldtr.read('http://example.org', 'text/trig')
+data = await ldtr.read('http://example.org', 'application/trig')
 
 // Supply data and type
 data = await ldtr.read({ data: '<a> :b "c" .', type: 'text/turtle' })

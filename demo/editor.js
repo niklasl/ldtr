@@ -47,7 +47,7 @@ var ldtrEditor = {
       let type = this.typeSelect.options[this.typeSelect.selectedIndex].value
       if (type === 'application/ld+json') {
         this.setData(JSON.stringify(this.currentData, null, 2), type)
-      } else if (type === 'text/turtle' || type === 'text/trig') {
+      } else if (type === 'text/turtle' || type === 'application/trig') {
         const serializer = await import('../lib/trig/serializer.js')
         let chunks = []
         serializer.serialize(this.currentData, {write (chunk) {chunks.push(chunk)}})
