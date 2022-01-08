@@ -29,7 +29,9 @@
 
     function toSymbols(objectList) {
         function reducePname(o) {
-            return o[PNAME_TAG]? o['@id'] : o;
+            if (typeof o === 'object' && '@id' in o) {
+                return o['@id'];
+            }
             // TODO: if value is not a string, item need to use rdf:type as
             // key for those values instead of @type
         }
