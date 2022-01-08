@@ -3,6 +3,7 @@ import * as transcribers from '../lib/transcribers.js'
 import { guessMediaType }  from '../lib/mediatypes.js'
 import {visualize} from './visualizer.js'
 import {renderArrows} from './arrows.js'
+import {toggleTheme} from './theme.js'
 
 var ldtrEditor = {
 
@@ -14,6 +15,10 @@ var ldtrEditor = {
     this.typeSelect = document.querySelector('select#typesel')
     let reload = document.querySelector('#reload')
     this.toggleedit = document.querySelector('#toggleedit')
+
+    let darktoggle = document.querySelector('#darktoggle')
+    darktoggle.addEventListener('click', toggleTheme)
+    toggleTheme()
 
     this.params = this.parseParams(
         window.location.search.substring(1))

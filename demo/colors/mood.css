@@ -1,0 +1,95 @@
+body {
+  --wall: #10170c;
+  --border: #777;
+  --shade2: rgba(0, 0, 0, 0.2);
+  --shade3: rgba(0, 0, 0, 0.3);
+  --shade4: rgba(0, 0, 0, 0.4);
+  --shade6: rgba(0, 0, 0, 0.6);
+
+  --card: #40453b;
+  --cardlight: #455;
+
+  --databox: #222;
+  --databorder: #997;
+
+  --symbol: #8da;
+  --term: #ac9;
+  --text: #dda;
+  --code: #aa9;
+
+  --ref: #ca7;
+  --refbox: #211;
+  --refborder: #763;
+
+  --arrow: #764;
+  --arrowbox: rgba(34, 34, 34, 0.4);
+  --arrowlight: rgba(34, 34, 34, 0.8);
+  --arrowback: rgb(103, 111, 111, 0.6);
+  --arrowtext: #676f6f;
+}
+
+#view {
+  background-color: var(--wall);
+  color: var(--text);
+}
+
+#editor,
+body.edit #edit,
+input, button, select,
+#status {
+  background-color: var(--databox);
+  color: var(--code);
+}
+input, button, select {
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+article.card { background-color: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0px 1px 1px var(--shade3); }
+article.card:hover { box-shadow: 0px 1px 2px var(--shade6); }
+article.card:target, article.card.selected { background-color: var(--cardlight);
+  box-shadow: 0px 4px 8px var(--shade4); }
+
+article.card.graph { background-color: var(--databox);
+  border: 1px dashed var(--border); }
+article.card.graph > header > a { color: var(--border); }
+
+.card > header > b { color: var(--symbol); }
+.card div > b,
+.card p > b { color: var(--term); }
+
+.card > header > a.id { color: var(--ref); }
+a.ref { color: var(--ref); }
+a.ref { background-color: var(--refbox);
+  border: 1px solid var(--refborder);
+  box-shadow: 0px 1px 1px var(--shade2); }
+a.ref:hover,
+a.ref.selected { box-shadow: 0px 1px 2px var(--shade4); }
+
+.card .lang,
+.card .datatype { color: var(--code);
+  background-color: var(--databox);
+  border: 1px solid var(--databorder); }
+
+.context b.pfx { color: var(--border); }
+.context a.ref { color: var(--border);
+  background-color: transparent;
+  border: 1px solid var(--border); }
+
+.card aside.rev { background-color: #222; }
+
+span.arrow {
+  color: var(--arrowtext);
+  border: 1px solid var(--arrowtext);
+  background-color: var(--arrowbox);
+}
+span.arrow:hover {
+  background-color: var(--arrowlight);
+}
+span.arrow > a.id { color: var(--arrow); }
+path.arrow.rev { stroke: var(--arrowback); }
+#arrowhead-rev { fill: var(--arrowback); }
+path.arrow.rel { stroke: var(--arrow); }
+#arrowhead-rel { fill: var(--arrow); }

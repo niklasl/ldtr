@@ -4,7 +4,8 @@
     <title>LDTR Demo</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="editor.css" />
-    <link rel="stylesheet" href="colors/vintage.css" />
+    <link rel="stylesheet" href="colors/vintage.css" class="light" />
+    <link rel="stylesheet alternate" href="colors/mood.css" class="dark" />
     <script type="module" src="editor.js"></script>
   </head>
   <body>
@@ -14,11 +15,14 @@
       <textarea id="editor" rows="40" spellcheck="false"></textarea>
       <menu>
         <input id="url" size="48" />
-        <button id="reload">🗘</button>
+        <button id="reload" title="(Re-)load">🗘</button>
         <select id="typesel"></select>
       </menu>
       <div id="status"></div>
     </section>
-    <button id="toggleedit">&nbsp;</button>
+    <section id="toggles">
+      <button id="darktoggle" title="Toggle dark/light mode">&#x25d0;</button>
+      <button id="toggleedit" title="Toggle editor">&nbsp;</button>
+    </section>
   </body>
 </html>

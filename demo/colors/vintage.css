@@ -25,7 +25,7 @@ article.card.embedded { border: 1px solid #36b;
 article.card.term { background-color: rgba(200, 242, 255, 0.8); }
 
 .card > header > b { color: #640; }
-.card div > b, .card p > b { color: #044; }
+.card div > b { color: #044; }
 
 .card > header > a.id, a.ref { color: #601; }
 a.ref { background-color: #ffe;

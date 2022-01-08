@@ -83,8 +83,16 @@ menu {
   margin: 0;
   padding: 0 1em;
 }
-button#toggleedit {
+
+section#toggles {
+  width: 45%;
   position: fixed;
   bottom: 1em;
   right: 1em;
+  text-align: right;
+}
+section#toggles button {
+  width: 2em;
+  height: 2em;
+  vertical-align: middle;
 }
