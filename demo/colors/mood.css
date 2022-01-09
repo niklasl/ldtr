@@ -71,12 +71,20 @@ a.ref.selected { box-shadow: 0px 1px 2px var(--shade4); }
 .card .lang,
 .card .datatype { color: var(--code);
   background-color: var(--databox);
-  border: 1px solid var(--databorder); }
+  border: 1px solid var(--border); }
 
 .context b.pfx { color: var(--border); }
 .context a.ref { color: var(--border);
   background-color: transparent;
   border: 1px solid var(--border); }
+
+.annotation { background-color: var(--arrowbox);
+  border-color: var(--border); }
+.card .annotation div > b,
+.card .annotation p > b { color: var(--code); }
+.annotation a.ref { background-color: var(--databox);
+  color: var(--code);
+  border-color: var(--border); }
 
 .card aside.rev { background-color: #222; }
 

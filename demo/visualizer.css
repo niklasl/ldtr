@@ -64,6 +64,7 @@ article.card > header {
   float: right;
   color: #888;
   text-decoration: none;
+  margin-left: 2em;
 }
 
 .card > header > a.id:before { content: "<"; }
@@ -73,12 +74,11 @@ article.card > div {
   margin: 0 0.5em;
 }
 
-article.card p {
+article.card div.p {
   margin: 0.4em 0.5em;
 }
 
-.card div > b,
-.card p > b {
+.card div > b {
   color: #888;
 }
 
@@ -141,4 +141,19 @@ a.ref:hover, a.ref.selected {
   margin: 0;
   padding: 0.5em;
   border-top: 0.2em ridge;
+}
+
+.annotation {
+  font-size: 0.8em;
+  background-color: #eaeaea;
+  border: 1px dashed #aaa;
+  border-radius: 5px;
+  padding: 0 0.4em;
+  font-style: italic;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 0.4em;
+}
+article.card .annotation div.p {
+  margin: 0.1em 0.2em;
 }

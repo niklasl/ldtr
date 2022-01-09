@@ -33,13 +33,6 @@ a.ref { background-color: #ffe;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2); }
 a.ref:hover, a.ref.selected { box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4); }
 
-span.arrow { color: #676f6f; border: 1px solid #676f6f; }
-span.arrow > a.id { color: #601; }
-path.arrow.rev { stroke: rgb(103, 111, 111, 0.6); }
-#arrowhead-rev { fill: rgb(103, 111, 111, 0.6); }
-path.arrow.rel { stroke: #601; }
-#arrowhead-rel { fill: #601; }
-
 .card .datatype { color: #333;
   background-color: #fafafa;
   border: 1px solid #aaa; }
@@ -49,4 +42,19 @@ path.arrow.rel { stroke: #601; }
   background-color: #eee;
   border: 1px solid #888; }
 
+.annotation { background-color: rgba(223, 223, 223, 0.8);
+  border-color: #888; }
+.card .annotation div > b,
+.card .annotation p > b { color: #014; }
+.annotation a.ref { background-color: var(--databox);
+  color: #014;
+  border-color: #888; }
+
 .card aside.rev { background-color: #eee; }
+
+span.arrow { color: #676f6f; border: 1px solid #676f6f; }
+span.arrow > a.id { color: #601; }
+path.arrow.rev { stroke: rgb(103, 111, 111, 0.6); }
+#arrowhead-rev { fill: rgb(103, 111, 111, 0.6); }
+path.arrow.rel { stroke: #601; }
+#arrowhead-rel { fill: #601; }

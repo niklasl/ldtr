@@ -14,6 +14,8 @@ import {
   REVERSE
 } from '../lib/jsonld/keywords.js'
 
+const ANNOTATION = '@annotation'
+
 export function visualize(elem, result, params = {}) {
   var chunks = []
   var out = chunks.push.bind(chunks)
@@ -64,6 +66,9 @@ function showNode(out, node, embedded) {
   if (graph) {
     classes += ' graph'
   }
+
+  showAnnotation(out, node)
+
   var idattr = id != null? ' id="'+ id + (graph ? '@graph' : '') +'"' : ''
   out('<'+tag + idattr +' class="card '+ classes +'">')
   out('<header>')
@@ -92,30 +97,29 @@ function showType(out, node) {
   let types = node[TYPE]
   if (!Array.isArray(types)) types = [types]
   for (let type of types) {
-    out('<b>'+ type +'</b>')
+    let v = typeof type === 'object' ? type[TYPE] : type
+    out('<b>'+ v +'</b>')
+    showAnnotation(out, type)
   }
 }
 
 function showContents(out, node, inArray) {
-  if (inArray)
+  if (inArray) {
     node = {'': node}
+  }
+
   for (var key in node) {
     if (key[0] === '@')
       continue
-    var value = node[key], dt = null, lang = null
-    if (value[VALUE]) {
-      lang = value[LANG]
-      dt = value[TYPE]
-      value = value[VALUE]
-    }
-    if (typeof value === 'string' || typeof value === 'number' ||
-      typeof value === 'boolean') {
-      out('<p>')
+
+    var value = node[key]
+
+    if (isLiteral(value)) {
+      out('<div class="p">')
       if (!inArray) showTerm(out, key)
-      showLiteral(out, value, lang, dt)
-      out('</p>')
-    }
-    else if (Array.isArray(value)) {
+      showLiteral(out, value)
+      out('</div>')
+    } else if (Array.isArray(value)) {
       out('<div>')
       if (!inArray) showTerm(out, key)
       out('<ul>')
@@ -126,8 +130,7 @@ function showContents(out, node, inArray) {
       }
       out('</ul>')
       out('</div>')
-    }
-    else if (typeof value === 'object') {
+    } else if (typeof value === 'object') {
       if (value[LIST]) {
         out('<div>')
         showTerm(out, key)
@@ -140,10 +143,10 @@ function showContents(out, node, inArray) {
         out('</ol>')
         out('</div>')
       } else if (value[ID]) {
-        out('<p>')
+        out('<div class="p">')
         if (!inArray) showTerm(out, key)
         showRef(out, value)
-        out('</p>')
+        out('</div>')
       } else {
         out('<div>')
         if (!inArray) showTerm(out, key)
@@ -161,15 +164,32 @@ function showTerm(out, key) {
 function showRef(out, node) {
   var id = node[ID]
   out('<a class="ref" href="#'+ id +'">'+ id +'</a>')
+  showAnnotation(out, node)
+}
+function isLiteral(value) {
+  if (typeof value === 'object' && VALUE in value) return true
+  return typeof value === 'string' || typeof value === 'number' ||
+        typeof value === 'boolean'
 }
 
-function showLiteral(out, value, lang, dt) {
+function showLiteral(out, value) {
+  let literal = null
+  let dt = null
+  let lang = null
+  if (typeof value === 'object' && VALUE in value) {
+    lang = value[LANG]
+    dt = value[TYPE]
+    literal = value[VALUE]
+  } else {
+    literal = value
+  }
   var note = ''
   if (lang)
     note += ' <span class="lang">' + lang +'</span>'
   if (dt)
     note += ' <span class="datatype">' + dt +'</span>'
-  out('<span>'+ value + note + '</span>')
+  out('<span>'+ literal + note + '</span>')
+  showAnnotation(out, value)
 }
 
 function showReverses(out, revs) {
@@ -187,4 +207,13 @@ function showReverses(out, revs) {
   }
   out('</div>')
   out('</aside>')
+}
+
+function showAnnotation (out, node) {
+  let annot = node[ANNOTATION]
+  if (annot) {
+    out('<div class="annotation">')
+    showContents(out, annot)
+    out('</div>')
+  }
 }
