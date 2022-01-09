@@ -1,0 +1,46 @@
+prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/>
+prefix note: <https://example.net/annot/>
+prefix : <http://schema.org/>
+base <https://example.org/>
+
+graph </product/The_Fellowship_of_the_Ring/> {
+
+  </product/The_Fellowship_of_the_Ring/> a :DigitalDocument {| note:kind rdfg:Graph |} ;
+    :publisher </org/kb>;
+    :dateModified "2017-04-22T06:55:14Z"^^:DateTime ;
+    :mainEntity </product/The_Fellowship_of_the_Ring> .
+
+  </product/The_Fellowship_of_the_Ring> a :Book {| note:kind </dfn/BoundVolume> |} ;
+    :bookFormat :Paperback ;
+    :datePublished "1956"^^:Date ;
+    :exampleOfWork </text/The_Fellowship_of_the_Ring> .
+
+}
+
+graph </text/The_Fellowship_of_the_Ring/> {
+
+  </text/The_Fellowship_of_the_Ring/> a :DigitalDocument  {| note:kind rdfg:Graph |} ;
+    :publisher </org/kb> ;
+    :dateModified "2017-04-22T06:55:14Z"^^:DateTime ;
+    :mainEntity </text/The_Fellowship_of_the_Ring> .
+
+  </text/The_Fellowship_of_the_Ring> a :CreativeWork {| note:kind </dfn/Textual> |} ;
+    :name "Fellowship of the Ring"@en {| note:role </dfn/OriginalTitle> ; note:source </product/The_Fellowship_of_the_Ring> |} ;
+    :genre </concept/Fantasy> ;
+    :author </person/J._R._R._Tolkien> .
+
+}
+
+graph </person/J._R._R._Tolkien/> {
+
+  </person/J._R._R._Tolkien/> a :DigitalDocument ;
+    :publisher </org/kb> ;
+    :dateModified "2017-04-22T06:55:14Z"^^:DateTime ;
+    :mainEntity </person/J._R._R._Tolkien> .
+
+  </person/J._R._R._Tolkien> a :Person ;
+    :name "J. R. R. Tolkien"  {| note:role </dfn/abbreviated> |} ,
+      "Tolkien"  {| note:role </dfn/surname> |} ;
+    :dateOfBirth  "1892"^^:Date {| note:source <https://en.wikipedia.org/wiki/J._R._R._Tolkien> |} .
+
+}

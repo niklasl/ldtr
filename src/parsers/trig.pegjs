@@ -4,11 +4,33 @@
 
 {
 
+    const PNAME_TAG = "_:neverspace.net,2016-01-10:ldtr:pname";
+
+    const TYPE = '@type';
+    const ANNOTATION = '@annotation';
+    const ANNOTATED_TYPE_KEY = TYPE; // '@index' // '@set'
+    const TYPEANNOTATION = null;//'@type@annotation';
+    const KEEP_REDUNDANT_ANNOTATED_TYPE = false; // true;
+    const TYPEANNOTATION_DECL = {
+        [TYPEANNOTATION]: {
+            "@id": TYPE,
+            "@container": "@annotation"
+        }
+    };
+    //const ANNOTATED_OBJECTS_KEY = '@object';
+
     function assign(target, source) {
         for (var key in source) {
             target[key] = source[key];
         }
         return target;
+    }
+
+    function isEmptyObject(o) {
+        for (let k in o) {
+            if (o.hasOwnProperty(k)) return false;
+        }
+        return true;
     }
 
     function contextItem(key, value) {
@@ -25,29 +47,73 @@
         return contextItem('@base', iriref['@id']);
     }
 
-    var PNAME_TAG = "_:neverspace.net,2016-01-10:ldtr:pname";
-
-    function toSymbols(objectList) {
-        function reducePname(o) {
-            if (typeof o === 'object' && '@id' in o) {
-                return o['@id'];
-            }
-            // TODO: if value is not a string, item need to use rdf:type as
-            // key for those values instead of @type
-        }
-        if (Array.isArray(objectList)) {
-            return objectList.map(function (o) {
-                return reducePname(o);
-            });
-        } else {
-            return reducePname(objectList);
-        }
-    }
-
     function toPair(verb, objectList) {
+        if (verb === TYPE) return toTypePair(objectList);
+
         var po = {};
         po[verb] = objectList;
         return po;
+    }
+
+    function toTypePair(objectList) {
+        function reducePname(o) {
+            if (typeof o === 'object') {
+                /*
+                if (ANNOTATED_OBJECTS_KEY &&
+                    ANNOTATED_OBJECTS_KEY in o &&
+                    '@id' in o[ANNOTATED_OBJECTS_KEY]) {
+                    o[ANNOTATED_OBJECTS_KEY] = o[ANNOTATED_OBJECTS_KEY]['@id']
+                } else
+                */
+                if ('@id' in o) {
+                    if (ANNOTATION in o) {
+                        o = {
+                            [ANNOTATED_TYPE_KEY]: o['@id'],
+                            [ANNOTATION]: o[ANNOTATION]
+                        }
+                    } else {
+                        o = o['@id']
+                    }
+                }
+                // TODO: if value is an actual (b)node object, item need to use
+                // rdf:type as key for those values instead of @type.
+            }
+            return o
+        }
+
+        let isObjectArray = Array.isArray(objectList)
+        if (!isObjectArray) {
+            objectList = [objectList]
+        }
+
+        let plain = [];
+        let annotated = {};
+        let anyannot = false;
+
+        for (let o of objectList) {
+            let reduced = reducePname(o);
+            if (typeof reduced === 'object' && TYPEANNOTATION) {
+                anyannot = true;
+                let typevalue = reduced[ANNOTATED_TYPE_KEY];
+                annotated[typevalue] = reduced[ANNOTATION];
+                if (KEEP_REDUNDANT_ANNOTATED_TYPE) {
+                    plain.push(typevalue);
+                }
+            } else {
+                plain.push(reduced);
+            }
+        }
+
+        let typepair = {};
+        if (plain.length > 0) {
+            typepair[TYPE] = !isObjectArray ? plain[0] : plain;
+        }
+        if (anyannot) {
+            typepair['@context'] = TYPEANNOTATION_DECL
+            typepair[TYPEANNOTATION] = annotated;
+        }
+
+        return typepair;
     }
 
     function reducePairs(subject, pairs) {
@@ -79,6 +145,24 @@
             }
         }
         return subject;
+    }
+
+    function packAnnotation (object, annotation) {
+        if (annotation == null) {
+            return object
+        }
+        /*
+        if (ANNOTATED_OBJECTS_KEY) {
+            annotation[ANNOTATED_OBJECTS_KEY] = object
+            return annotation
+        }
+        */
+        if (typeof object !== 'object') {
+            object = {'@value': object, [ANNOTATION]: annotation}
+        } else {
+            object[ANNOTATION] = annotation
+        }
+        return object
     }
 
     var echars = {
@@ -133,7 +217,14 @@ trigDoc =
                 }
                 assign(currentContext, ctxItem);
                 vocab = currentContext['@vocab'] || '';
-            } else if (Array.isArray(item)) {
+
+                delete item['@context'];
+                if (isEmptyObject(item)) {
+                    continue
+                }
+            }
+
+            if (Array.isArray(item)) {
                 currentGraph.push.apply(currentGraph, item);
             } else {
                 cleanupPNameTags(item, vocab);
@@ -224,31 +315,28 @@ triples =
 predicateObjectList =
     verb:verb objectList:objectList rest:(';' vol:(verb objectList)? { return vol; } )* IGNORE
     {
-        if (verb === '@type') {
-            objectList = toSymbols(objectList);
-        }
         var po = toPair(verb, objectList);
         var pairs = [po];
         for (var pair of rest) {
             if (pair === null) // last ';', so we could also break
                 continue
-            var restList = pair[1];
-            if (pair[0] === '@type') {
-                restList = toSymbols(restList);
-            }
-            po = toPair(pair[0], restList);
+            let [rTerm, rList] = pair;
+            po = toPair(rTerm, rList);
             pairs.push(po);
         }
         return pairs;
     }
 
 objectList =
-    first:object remainder:(IGNORE ',' IGNORE  object:object { return object; } )*
+    //first:object remainder:(IGNORE ',' IGNORE  object:object { return object; } )*
+    first:(object:object IGNORE annotation:annotation? { return packAnnotation(object, annotation) })
+    remainder:(IGNORE ',' IGNORE
+               annotated:(object:object IGNORE annotation:annotation? { return packAnnotation(object, annotation) }) { return annotated })*
     {
         if (remainder.length > 0) {
             var objects = [first];
-            for (var object of remainder) {
-                objects.push(object);
+            for (var annotated of remainder) {
+                objects.push(annotated);
             }
             return objects;
         } else {
@@ -257,7 +345,7 @@ objectList =
     }
 
 verb =
-    IGNORE verb:(predicate / 'a' {return '@type'; } ) IGNORE
+    IGNORE verb:(predicate / 'a' {return TYPE; } ) IGNORE
     {
         return typeof verb === 'object' ? verb['@id'] || '' : verb;
     }
@@ -285,13 +373,19 @@ collection = IGNORE '(' IGNORE collection:object* IGNORE ')' IGNORE
         return {'@list': collection};
     }
 
+annotation =
+    IGNORE '{|' pos:predicateObjectList '|}' IGNORE
+    {
+        return reducePairs({}, pos);
+    }
+
 // NOTE: PEG.js needed reversed match order
 NumericLiteral =
     DOUBLE / DECIMAL / INTEGER
 
 RDFLiteral =
     rdfliteral: String tag:(LANGTAG /
-                            '^^' datatype:iri { return {'@type': datatype['@id']}; } )?
+                            '^^' datatype:iri { return {[TYPE]: datatype['@id']}; } )?
     {
         var value = rdfliteral;
         if (tag !== null) {
