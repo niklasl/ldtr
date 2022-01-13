@@ -26,6 +26,23 @@
   padding: 1em 1.5em;
 }
 
+body.loading:before {
+  position: absolute;
+  z-index: 10;
+  top: 1em;
+  left: 40%;
+  width: 20%;
+  overflow: hidden;
+  text-align: center;
+  content: "LOADING...";
+  font-weight: bold;
+  border: 1px solid #aaa;
+  color: #000;
+}
+body.loading .card {
+  opacity: 0.5;
+}
+
 body.edit #view {
   right: 50%;
 }

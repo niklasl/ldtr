@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="editor.css" />
     <link rel="stylesheet" href="colors/vintage.css" class="light" />
     <link rel="stylesheet alternate" href="colors/mood.css" class="dark" />
-    <script type="module" src="editor.js"></script>
+    <script type="module">
+      import {ldtrEditor} from './editor.js'
+      ldtrEditor.init(window)
+    </script>
   </head>
   <body>
     <section id="view">
@@ -21,8 +24,8 @@
       <div id="status"></div>
     </section>
     <section id="toggles">
-      <button id="darktoggle" title="Toggle dark/light mode">&#x25d0;</button>
-      <button id="toggleedit" title="Toggle editor">&nbsp;</button>
+      <button id="darktoggle" title="Toggle dark/light mode (D)">&#x25d0;</button>
+      <button id="toggleedit" title="Toggle editor (E)">&nbsp;</button>
     </section>
   </body>
 </html>

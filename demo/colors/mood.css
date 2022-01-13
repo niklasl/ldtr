@@ -28,6 +28,10 @@ body {
   --arrowtext: #676f6f;
 }
 
+body.loading:before {
+  color: #fff;
+}
+
 #view {
   background-color: var(--wall);
   color: var(--text);

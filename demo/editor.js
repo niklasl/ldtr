@@ -1,13 +1,39 @@
 import {readSource} from '../lib/xhtreqreader.js'
 import * as transcribers from '../lib/transcribers.js'
-import { guessMediaType }  from '../lib/mediatypes.js'
+import {
+  suffixMediaTypeMap as mediaTypes,
+  guessMediaType,
+}  from '../lib/mediatypes.js'
+import { CONTEXT, GRAPH, ID } from '../lib/jsonld/keywords.js'
 import {visualize} from './visualizer.js'
 import {renderArrows} from './arrows.js'
 import {toggleTheme} from './theme.js'
 
-var ldtrEditor = {
+export const ldtrEditor = {
 
-  init: function () {
+  async init (window) {
+    this.params = this.parseParams(window.location.search.substring(1))
+    this.window = window
+
+    window.addEventListener('load', () => {
+      this.setupWidgetsAndHandlers()
+      if (this.params.url) {
+        this.loadData(decodeURIComponent(this.params.url), true)
+      }
+    })
+  },
+
+  parseParams (query) {
+    return query.split(/\&/).reduce(function (map, pair) {
+      var tuple = pair.split(/=/)
+      map[tuple[0]] = tuple[1] || true
+      return map
+    }, {})
+  },
+
+  setupWidgetsAndHandlers () {
+    let document = this.window.document
+    this.body = document.body
     this.viewDiv = document.querySelector('#view')
     this.editorArea = document.querySelector('#editor')
     this.statusDiv = document.querySelector('#status')
@@ -16,31 +42,55 @@ var ldtrEditor = {
     let reload = document.querySelector('#reload')
     this.toggleedit = document.querySelector('#toggleedit')
 
+    if (!this.params.url || this.params.edit) {
+      this.body.classList.add('edit')
+    }
+
     let darktoggle = document.querySelector('#darktoggle')
     darktoggle.addEventListener('click', toggleTheme)
     toggleTheme()
 
-    this.params = this.parseParams(
-        window.location.search.substring(1))
-
-    if (!this.params.url || this.params.edit) {
-      document.body.classList.add('edit')
-    }
-
     this.editorArea.onkeyup = function () {
-      this.parseAndProcess()
+      this.onEdit()
     }.bind(this)
 
     const toggleEditLabel = on => {
       this.toggleedit.textContent = on ? '»' : '«'
     }
-    toggleEditLabel(document.body.classList.contains('edit'))
-    this.toggleedit.addEventListener('click', evt => {
-      toggleEditLabel(document.body.classList.toggle('edit'))
-    })
+    toggleEditLabel(this.body.classList.contains('edit'))
+    const toggleEdit = () => {
+      toggleEditLabel(this.body.classList.toggle('edit'))
+    }
+    this.toggleedit.addEventListener('click', toggleEdit)
 
     reload.addEventListener('click', async evt => {
       this.loadData(this.urlInput.value)
+    })
+
+    document.addEventListener('dblclick', async evt => {
+      let link = evt.target.closest('a:link')
+      if (link) {
+        evt.stopPropagation()
+        evt.preventDefault()
+
+        let href = link.attributes.href.value
+        href = this.expandCurie(href)
+
+        console.log(`Loading ${href}...`)
+        await this.loadData(href)
+
+        this.viewDiv.scrollTo({
+          left: this.body.offsetLeft,
+          top: this.body.offsetTop,
+          behavior: 'smooth'
+        })
+      }
+    })
+
+    this.window.addEventListener('popstate', evt => {
+      this.currentData = evt.state
+      this.setDataJson(this.currentData)
+      this.process(this.currentData)
     })
 
     for (let type in transcribers.transcribers) {
@@ -49,36 +99,52 @@ var ldtrEditor = {
     }
 
     this.typeSelect.addEventListener('change', async evt => {
+      // convertEditorData
       let type = this.typeSelect.options[this.typeSelect.selectedIndex].value
-      if (type === 'application/ld+json') {
-        this.setData(JSON.stringify(this.currentData, null, 2), type)
-      } else if (type === 'text/turtle' || type === 'application/trig') {
+      if (type === mediaTypes.jsonld) {
+        this.setDataJson(this.currentData)
+      } else if (type === 'text/turtle' || type === mediaTypes.trig) {
         const serializer = await import('../lib/trig/serializer.js')
         let chunks = []
         serializer.serialize(this.currentData, {write (chunk) {chunks.push(chunk)}})
-        this.setData(chunks.join(''), type)
+        this.setDataText(chunks.join(''), type)
       }
     })
 
-    if (this.params.url) {
-      this.loadData(decodeURIComponent(this.params.url))
-    }
+    document.addEventListener('keydown', evt => {
+      if (evt.target.closest('input, textarea, select')) {
+        return
+      }
+      if (!evt.shiftKey) {
+        return
+      }
+      switch (evt.key) {
+        case 'E':
+          toggleEdit()
+          break
+        case 'D':
+          toggleTheme()
+          break
+      }
+    })
   },
 
-  parseParams: function (query) {
-    return query.split(/\&/).reduce(function (map, pair) {
-      var tuple = pair.split(/=/)
-      map[tuple[0]] = tuple[1] || true
-      return map
-    }, {})
-  },
-
-  loadData: async function (url) {
+  async loadData (url, initial = false) {
     if (!url) return
 
-    let headers = transcribers.requestHeaders()
-    let { data, type } = await readSource(url, headers)
+    this.body.classList.add('loading')
 
+    let headers = transcribers.requestHeaders()
+    let result
+    try {
+      result = await readSource(url, headers)
+    } catch (e) {
+      this.body.classList.remove('loading')
+      console.error(e)
+      return
+    }
+
+    let { data, type } = result
     if (data.nodeType === 9) {
       data = data.documentElement.outerHTML
     }
@@ -86,32 +152,35 @@ var ldtrEditor = {
     if (!(type in transcribers.transcribers)) {
       type = guessMediaType(url)
     }
-    this.setData(data, type)
+
+    this.setDataText(data, type)
 
     await this.parseAndProcess()
 
+    this.body.classList.remove('loading')
+
     // force browser to recognize dynamically generated :target
-    if (window.location.hash) {
-      window.location = window.location.hash
+    if (this.window.location.hash) {
+      this.window.location = this.window.location.hash
+    }
+
+    let urlParam = `url=${escape(url)}`
+    let appUrl = this.window.location.toString().replace(/([?&])url=.+&?/,
+                                                    `$1${urlParam}`)
+    if (appUrl.indexOf(urlParam) === -1) {
+      let delim = appUrl.indexOf('?') === -1 ? '?' : '&'
+      appUrl = `${appUrl}${delim}${urlParam}`
+    }
+
+    let title = this.window.document.title
+    if (initial) {
+      this.window.history.replaceState(this.currentData, title, appUrl)
+    } else {
+      this.window.history.pushState(this.currentData, title, appUrl)
     }
   },
 
-  setData: function (data, type) {
-    this.editorArea.value = data
-    this.typeSelect.selectedIndex = Array.prototype.findIndex.call(
-        this.typeSelect.options, it => it.value === type)
-  },
-
-  parseData: async function () {
-    let data = this.editorArea.value
-    let index = this.typeSelect.selectedIndex
-    let type = this.typeSelect.options[index > -1 ? index : 0].value
-    let url = this.urlInput.value
-    let transcribe = transcribers.transcribers[type]
-    return await transcribe({data, type, base: url})
-  },
-
-  parseAndProcess: async function () {
+  async onEdit () {
     let data = this.editorArea.value
     var pos = this.editorArea.selectionStart
     var row = 1
@@ -126,6 +195,20 @@ var ldtrEditor = {
     }
     this.statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n'
 
+    this.parseAndProcess()
+  },
+
+  setDataText (data, type) {
+    this.editorArea.value = data
+    this.typeSelect.selectedIndex = Array.prototype.findIndex.call(
+        this.typeSelect.options, it => it.value === type)
+  },
+
+  setDataJson (data) {
+    this.setDataText(JSON.stringify(data, null, 2), mediaTypes.jsonld)
+  },
+
+  async parseAndProcess () {
     let result
     try {
       result = await this.parseData()
@@ -137,6 +220,10 @@ var ldtrEditor = {
         +' Col: '+ e.location.start.column +'\n'+ e.message
       return
     }
+    this.process(result)
+  },
+
+  async process (result) {
     this.currentData = result
 
     this.statusDiv.classList.remove('error')
@@ -146,10 +233,28 @@ var ldtrEditor = {
       const indexer = await import('../lib/util/indexer.js')
       result = indexer.index(result)
     }
+
     visualize(this.viewDiv, result, this.params)
     renderArrows(this.viewDiv)
+  },
+
+  async parseData () {
+    let data = this.editorArea.value
+    let index = this.typeSelect.selectedIndex
+    let type = this.typeSelect.options[index > -1 ? index : 0].value
+    let url = this.urlInput.value
+    let transcribe = transcribers.transcribers[type]
+
+    return await transcribe({data, type, base: url})
+  },
+
+  expandCurie (href) {
+    let ctx = this.currentData[CONTEXT]
+    let pfx = href.split(':', 1)
+    if (ctx && pfx in ctx) {
+      href = `${ctx[pfx]}${href.substring(pfx.length + 2)}`
+    }
+    return href
   }
 
 }
-
-window.onload = ldtrEditor.init()
