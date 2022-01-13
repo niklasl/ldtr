@@ -67,8 +67,6 @@ function showNode(out, node, embedded) {
     classes += ' graph'
   }
 
-  showAnnotation(out, node)
-
   var idattr = id != null? ' id="'+ id + (graph ? '@graph' : '') +'"' : ''
   out('<'+tag + idattr +' class="card '+ classes +'">')
   out('<header>')
@@ -85,6 +83,9 @@ function showNode(out, node, embedded) {
       }
     }
   }
+
+  showAnnotation(out, node)
+
   let revs = node[REVERSE]
   if (revs) {
     showReverses(out, revs)
@@ -141,6 +142,7 @@ function showContents(out, node, inArray) {
           out('</li>')
         }
         out('</ol>')
+        showAnnotation(out, value)
         out('</div>')
       } else if (value[ID]) {
         out('<div class="p">')
