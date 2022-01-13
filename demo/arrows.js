@@ -28,14 +28,15 @@ export function renderArrows(container) {
 
   document.querySelectorAll('[id].card').forEach(target => {
     target.addEventListener('click', evt => {
+      if (evt.ctrlKey || evt.metaKey) return
+
       target.classList.toggle('selected')
       evt.preventDefault()
     })
   })
 
   document.querySelectorAll('.card a.ref').forEach(link => {
-    let idx = link.href.indexOf('#')
-    let targetId = link.href.substring(idx + 1)
+    let targetId = link.attributes.href.value
     let target = document.getElementById(targetId)
     if (!target) return
 
@@ -107,6 +108,8 @@ export function renderArrows(container) {
     computePaths.push(computePath)
 
     link.addEventListener('click', evt => {
+      if (evt.ctrlKey || evt.metaKey) return
+
       card.classList.remove('selected')
       link.classList.toggle('selected')
       evt.stopPropagation()

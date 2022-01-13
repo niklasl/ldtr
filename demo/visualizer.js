@@ -82,7 +82,7 @@ function showNode(out, node, embedded) {
     out('<span class="type"><i class="kw">graph</i></span>')
   }
   if (id != null) {
-    out('<a class="id" href="#'+ id +'">'+ id +'</a>')
+    out('<a class="id" href="'+ id +'">'+ id +'</a>')
   }
   if (TYPE in node) {
     showType(out, node[TYPE])
@@ -179,7 +179,7 @@ function showTerm(out, key) {
 
 function showRef(out, node) {
   var id = node[ID]
-  out('<a class="ref" href="#'+ id +'">'+ id +'</a>')
+  out('<a class="ref" href="'+ id +'">'+ id +'</a>')
   showAnnotation(out, node)
 }
 function isLiteral(value) {
