@@ -45,6 +45,8 @@ input, button, select {
   border: 1px solid var(--border);
 }
 
+.card.embedded { border-color: var(--border); }
+
 article.card { background-color: var(--card);
   border: 1px solid var(--border);
   box-shadow: 0px 1px 1px var(--shade3); }
@@ -54,9 +56,12 @@ article.card:target, article.card.selected { background-color: var(--cardlight);
 
 article.card.graph { background-color: var(--databox);
   border: 1px dashed var(--border); }
-article.card.graph > header > a { color: var(--border); }
+article.card.graph > header > .id { color: var(--border); }
 
-.card > header > b { color: var(--symbol); }
+  border-left: 0.2em solid #666;
+
+.card .kw { color: var(--border); }
+.type > b { color: var(--symbol); }
 .card div > b,
 .card p > b { color: var(--term); }
 
@@ -73,7 +78,7 @@ a.ref.selected { box-shadow: 0px 1px 2px var(--shade4); }
   background-color: var(--databox);
   border: 1px solid var(--border); }
 
-.context b.pfx { color: var(--border); }
+.context { color: var(--border); }
 .context a.ref { color: var(--border);
   background-color: transparent;
   border: 1px solid var(--border); }

@@ -1,17 +1,19 @@
 'use(strict)'
 
 import {
+  BASE,
+  CONTAINER,
   CONTEXT,
   GRAPH,
   ID,
+  INDEX,
+  LANGUAGE as LANG,
+  LIST,
+  REVERSE,
+  SET,
   TYPE,
   VALUE,
-  LANGUAGE as LANG,
-  CONTAINER,
-  LIST,
-  SET,
-  INDEX,
-  REVERSE
+  VOCAB,
 } from '../lib/jsonld/keywords.js'
 
 const ANNOTATION = '@annotation'
@@ -47,11 +49,17 @@ function showContext(out, context) {
   if (typeof context !== 'object') return
 
   out('<div class="context">')
-  for (var key in context) {
-    var value = context[key]
+  for (let key in context) {
+    let value = context[key]
     if (typeof value === 'string') {
       out('<p class="ns">')
-      out('<b class="pfx">'+ key +'</b> <a class="ref" href="'+ value +'">'+ value +'</a>')
+      if (key === BASE) {
+        out(`<i class="kw">base</i>`)
+      } else {
+        if (key === VOCAB) key = ''
+        out(`<b class="pfx">${key}:</b>`)
+      }
+      out(`<a class="ref" href="${value}">${value}</a>`)
       out('</p>')
     }
   }
@@ -70,10 +78,15 @@ function showNode(out, node, embedded) {
   var idattr = id != null? ' id="'+ id + (graph ? '@graph' : '') +'"' : ''
   out('<'+tag + idattr +' class="card '+ classes +'">')
   out('<header>')
+  if (graph) {
+    out('<span class="type"><i class="kw">graph</i></span>')
+  }
   if (id != null) {
     out('<a class="id" href="#'+ id +'">'+ id +'</a>')
   }
-  showType(out, node)
+  if (TYPE in node) {
+    showType(out, node[TYPE])
+  }
   out('</header>')
   showContents(out, node)
   if (graph) {
@@ -90,18 +103,19 @@ function showNode(out, node, embedded) {
   if (revs) {
     showReverses(out, revs)
   }
+
   out('</'+tag+'>')
 }
 
-function showType(out, node) {
-  if (node[TYPE] == null) return
-  let types = node[TYPE]
+function showType(out, types) {
+  out('<span class="type">')
   if (!Array.isArray(types)) types = [types]
   for (let type of types) {
     let v = typeof type === 'object' ? type[TYPE] : type
     out('<b>'+ v +'</b>')
     showAnnotation(out, type)
   }
+  out('</span>')
 }
 
 function showContents(out, node, inArray) {

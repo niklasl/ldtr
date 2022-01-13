@@ -1,3 +1,7 @@
+body {
+  --border: #aaa;
+}
+
 #view {
   background-color: #fffefa;
   color: #000;
@@ -8,6 +12,8 @@
   color: #014;
 }
 
+.card.embedded { border-color: var(--border); }
+
 article.card { background-color: #fff;
   border: 1px solid #aaa;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3); }
@@ -17,14 +23,14 @@ article.card:target, article.card.selected { background-color: #fbf8e8;
 
 article.card.graph { background-color: #fafafa;
   border: 1px dashed #aaa; }
-article.card.graph > header > a { color: #aaa; }
+article.card.graph > header > .id { color: #aaa; }
 
 article.card.embedded { border: 1px solid #36b;
   background-color: rgba(200, 242, 255, 0.8); }
 
 article.card.term { background-color: rgba(200, 242, 255, 0.8); }
 
-.card > header > b { color: #640; }
+.type > b { color: #640; }
 .card div > b { color: #044; }
 
 .card > header > a.id, a.ref { color: #601; }
