@@ -1,0 +1,17 @@
+prefix : <http://example.org/ns/>
+base <http://example.org/>
+
+</MM> :spouse\(s\)_ "NW" .
+
+</_MM_> :_spouse\(s\)_ "_NW_" .
+
+</__dunder__> :__dunder__ "_NW_" .
+
+</esc_tag_esc> :\_tag\_ "_NW_" .
+
+</dot> :\-dot\. 1 .
+
+<esc1> :escaped "\"esc\"" .
+
+<esc2> :escaped """
+"esc\"""" .
