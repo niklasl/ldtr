@@ -179,7 +179,7 @@
 }
 
 trigDoc =
-    IGNORE data:(directive / block)* IGNORE
+    IGNORE chunk:((directive / block) IGNORE)*
     {
         var currentContext = {}, currentGraph = [];
         var result = [
@@ -205,7 +205,7 @@ trigDoc =
             }
         }
 
-        for (var item of data) {
+        for (let [item, ws] of chunk) {
             var ctxItem = item['@context'];
             if (ctxItem) {
                 if (currentGraph.length !== 0) {

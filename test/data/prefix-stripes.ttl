@@ -1,0 +1,15 @@
+base <http://example.org/>
+
+prefix a: <a#>
+<a> a:t a:T .
+
+prefix b: <b#>
+<a> b:b b:B .
+
+base <http://example.net/>
+
+prefix : <a#>
+<a> :t :T .
+
+prefix : <b#>
+<a> :t :T .
