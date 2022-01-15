@@ -82,7 +82,7 @@ function showNode(out, node, embedded) {
     out('<span class="type"><i class="kw">graph</i></span>')
   }
   if (id != null) {
-    out('<a class="id" href="'+ id +'">'+ id +'</a>')
+    out('<a class="id" href="'+ id +'">'+ (id || '&nbsp;') +'</a>')
   }
   if (TYPE in node) {
     showType(out, node[TYPE])

@@ -33,7 +33,8 @@ article.card.term { background-color: rgba(200, 242, 255, 0.8); }
 .type > b { color: #640; }
 .card div > b { color: #044; }
 
-.card > header > a.id, a.ref { color: #601; }
+a.ref { color: #601; }
+.card > header > a.id { color: #601; background-color: rgba(239, 239, 222, 0.2); }
 a.ref { background-color: #ffe;
   border: 1px solid #601;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2); }

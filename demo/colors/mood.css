@@ -69,7 +69,7 @@ article.card.graph > header > .id { color: var(--border); }
 .card div > b,
 .card p > b { color: var(--term); }
 
-.card > header > a.id { color: var(--ref); }
+.card > header > a.id { color: var(--ref); background-color: var(--shade2); }
 a.ref { color: var(--ref); }
 a.ref { background-color: var(--refbox);
   border: 1px solid var(--refborder);
