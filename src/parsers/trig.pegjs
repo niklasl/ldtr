@@ -19,6 +19,8 @@
     };
     //const ANNOTATED_OBJECTS_KEY = '@object';
 
+    const TRIPLE_KEY = '@id';
+
     function assign(target, source) {
         for (var key in source) {
             target[key] = source[key];
@@ -242,13 +244,14 @@ block =
 
 triplesOrGraph =
     subject:labelOrSubject labelled:(wrappedGraph /
-                                 pos:predicateObjectList IGNORE '.' { return pos; } )
-    {
+                                 pos:predicateObjectList IGNORE '.' { return pos; } ) {
         if (typeof labelled['@graph'] !== 'undefined') {
             return assign(subject, labelled);
         } else {
             return reducePairs(subject, labelled);
         }
+    } / quoted:quotedTriple IGNORE pos:predicateObjectList IGNORE '.' {
+        return reducePairs(quoted, pos)
     }
 
 triples2 =
@@ -350,9 +353,9 @@ verb =
         return typeof verb === 'object' ? verb['@id'] || '' : verb;
     }
 
-subject = iri / blank
+subject = iri / blank / quotedTriple
 predicate = iri
-object = iri / blank / blankNodePropertyList / literal
+object = iri / blank / blankNodePropertyList / literal / quotedTriple
 
 literal =
     IGNORE literal:(RDFLiteral / NumericLiteral / BooleanLiteral) IGNORE
@@ -372,6 +375,14 @@ collection = IGNORE '(' IGNORE collection:object* IGNORE ')' IGNORE
     {
         return {'@list': collection};
     }
+
+quotedTriple = IGNORE '<<' IGNORE s:qtSubject IGNORE p:verb IGNORE o:qtObject IGNORE '>>' IGNORE {
+    let obj = reducePairs(s, [toPair(p, o)])
+    return { '@id': obj }
+}
+
+qtSubject = iri / BlankNode / quotedTriple
+qtObject = iri / BlankNode / literal / quotedTriple
 
 annotation =
     IGNORE '{|' pos:predicateObjectList '|}' IGNORE

@@ -1,11 +1,27 @@
 prefix : <https://example.org/vocab/>
 base <https://example.org/>
 
-</item/1> a :Thing {| :addedIn <rev1>; :removedIn <rev3> |},
-    :Item {| :addedIn <rev3> |} ;
-    :hasTitle [
-            :mainTitle "Item 1" {| :addedIn <rev1>; :removedIn <rev2> |} ,
-                "Item One" {| :addedIn <rev2> |} ;
-            :subtitle "an item" {|  :addedIn <rev3> |}
-        ] {| :addedIn <rev1> |} ;
-    :relatedTo </item/2> {| :addedIn <rev2> |} .
+graph <diff-union> {
+
+  </item/1> a :Thing {| :addedIn <rev1>; :removedIn <rev3> |},
+      :Item {| :addedIn <rev3> |} ;
+      :hasTitle [
+              :mainTitle "Item 1" {| :addedIn <rev1>; :removedIn <rev2> |} ,
+                  "Item One" {| :addedIn <rev2> |} ;
+              :subtitle "an item" {|  :addedIn <rev3> |}
+          ] {| :addedIn <rev1> |} ;
+      :relatedTo </item/2> {| :addedIn <rev2> |} .
+
+}
+
+graph <diff-removed-fragments> {
+
+  << </item/1> a :Thing >> :addedIn <rev1> ; :removedIn <rev3> .
+
+  </item/1> :hasTitle _:title .
+  << _:title :mainTitle "Item 1" >> :addedIn <rev1>; :removedIn <rev2> .
+
+  <rev1> :added << </item/1> a :Thing >> ,
+      << _:title :mainTitle "Item 1" >> .
+
+}
