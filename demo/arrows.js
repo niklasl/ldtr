@@ -59,9 +59,21 @@ export function renderArrows(container) {
     let computePath = () => {
       let linkX = link.offsetLeft
       let linkY = link.offsetTop + (link.offsetHeight / 2)
+      let offsetParent = link.offsetParent
+      while (offsetParent) {
+        linkX += offsetParent.offsetLeft
+        linkY += offsetParent.offsetTop
+        offsetParent = offsetParent.offsetParent
+      }
 
       let tgtX = target.offsetLeft
       let tgtY = target.offsetTop
+      offsetParent = target.offsetParent
+      while (offsetParent) {
+        tgtX += offsetParent.offsetLeft
+        tgtY += offsetParent.offsetTop
+        offsetParent = offsetParent.offsetParent
+      }
 
       let c1, c2
 
