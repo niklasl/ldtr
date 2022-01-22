@@ -1,0 +1,62 @@
+prefix prov: <http://www.w3.org/ns/prov#>
+prefix : <https://example.net/terms/>
+base <https://example.org/>
+
+<derek> a prov:Agent .
+<tutorial_blog> a prov:Plan, prov:Entity .
+<illustrationist> a prov:Role .
+
+<aggregated_by_regions> a prov:Entity .
+
+graph <using-qualification> {
+
+  ## Example 8:
+  <illustration_activity> a prov:Activity;
+    prov:usageQualification [ a prov:Usage;
+          prov:entity <aggregated_by_regions>;
+          prov:atTime "2011-07-14T03:03:03Z"^^xsd:dateTime
+      ] ;
+    ## Example 9:
+    prov:qualifiedAssociation [ a prov:Association;
+        prov:agent   <derek>;
+        prov:hadRole <illustrationist>;
+        prov:hadPlan <tutorial_blog>
+      ] .
+
+  ## Example 10:
+  <bar_chart> a prov:Entity;
+    prov:qualifiedGeneration [ a prov:Generation;
+        prov:activity <illustration_activity>;
+        prov:atTime "2011-07-14T15:52:14Z"^^xsd:dateTime;
+      ] ;
+    # Example 11:
+    prov:qualifiedDerivation [ a prov:Derivation;
+        prov:entity        <aggregated_by_regions>;
+        prov:hadActivity   <aggregating_activity>;
+        prov:hadUsage      <use_of_aggregated_data>;
+        prov:hadGeneration <generation_of_bar_chart>
+      ] .
+}
+
+graph <using-annotation> {
+
+  <illustration_activity> a prov:Activity;
+    prov:used <aggregated_by_regions> {|
+          prov:atTime "2011-07-14T03:03:03Z"^^xsd:dateTime
+      |} ;
+    prov:wasAssociatedWith <derek> {|
+        prov:hadRole <illustrationist>;
+        prov:hadPlan <tutorial_blog>
+      |} .
+
+  <bar_chart> a prov:Entity;
+    prov:wasGeneratedBy <illustration_activity> {|
+        prov:atTime "2011-07-14T15:52:14Z"^^xsd:dateTime;
+      |} ;
+    prov:wasDerivedFrom <aggregated_by_regions> {|
+        prov:hadActivity <aggregating_activity>;
+        prov:hadUsage <use_of_aggregated_data>;
+        prov:hadGeneration <generation_of_bar_chart>
+      |} .
+
+}

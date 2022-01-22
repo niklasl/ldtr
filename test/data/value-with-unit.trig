@@ -1,0 +1,58 @@
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix : <https://example.net/terms/>
+base <https://example.org/>
+
+graph <common-basic> {
+
+  <painting> :height "32.1 cm" .
+
+  <painting> :heightInCm 32.1 .
+
+}
+
+graph <traditional-structured-value> {
+
+  <painting> :height [ rdf:value 32.1 ;
+        :unit <cm>;
+        :measurementTechnique <laser-scanning>;
+        :measuredOn "2020-02-11"^^xsd:date
+    ] .
+
+}
+
+graph <subclassed-datatype> {
+
+  # typedef:
+  <cm> rdfs:subClassOf xsd:double ; :matches "\\d+(\\.\\d+)?\\s*(mm|cm|m|km)" .
+
+  <painting> :height "32.1"^^<cm> {|
+        :measurementTechnique <laser-scanning>;
+        :measuredOn "2020-02-11"^^xsd:date
+    |} .
+
+}
+
+graph <singleton-property> {
+
+  <#heightInCmLaserSCannedAt20200211> rdfs:subPropertyOf :height;
+    :unit <cm>;
+    :measurementTechnique <laser-scanning>;
+    :measuredOn "2020-02-11"^^xsd:date .
+
+  <painting> <#heightInCmLaserSCannedAt20200211> 32.1 .
+
+}
+
+graph <using-annotation> {
+
+  <painting> :height 32.1 {|
+        :unit <cm>;
+        :measurementTechnique <laser-scanning>;
+        :measuredOn "2020-02-11"^^xsd:date
+    |}, 3.21 {|
+        :unit <m>;
+        :measurementTechnique <laser-scanning>;
+        :measuredOn "2020-02-11"^^xsd:date
+    |} .
+
+}
