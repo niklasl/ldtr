@@ -153,7 +153,10 @@ The TriG parser is generated from a grammar file (based on the
 [PEG.js](http://pegjs.org/).
 
 By default on Node e.g. when using the CLI, LDTR uses
-[xmldom](https://github.com/jindw/xmldom) for HTML and XML parsing.
+[xmldom](https://github.com/xmldom/xmldom) for HTML and XML parsing.
+
+(Caveat: Internal XML entity declarations are
+[not handled by xmldom yet](https://github.com/xmldom/xmldom/issues/117).)
 
 ## Rationale
 
