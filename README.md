@@ -54,6 +54,11 @@ with some minimal provisioning for different runtimes.
   tool can of course either pass data through verbatim, or expand it and act
   upon that.
 
+* Experimental support for
+  [RDF-star](https://w3c.github.io/rdf-star/cg-spec/2021-12-17.html) expressed
+  as **TriG-star** and [JSON-LD-star](https://json-ld.github.io/json-ld-star/) is
+  included.
+
 ## Output Forms and Formats
 
 For flexible compact JSON-LD, you can, and often should, also pass the result
@@ -62,7 +67,7 @@ through a JSON-LD processor (such as
 control over the shapes and terms of the results.
 
 While primarily designed to produce a native data structure representable as
-JSON-LD, LDTR also includes TriG serializer, which similarly works by
+JSON-LD, LDTR also includes a *TriG serializer*, which similarly works by
 transcribing the JSON-LD as simply as possible. This imposes some restrictions
 upon the data, due to which advanced features of JSON-LD LDTR can faithfully
 transcribe. (You can always feed it expanded JSON-LD to ensure compatibility
