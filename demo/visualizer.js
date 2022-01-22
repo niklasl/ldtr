@@ -66,23 +66,27 @@ function showContext(out, context) {
   out('</div>')
 }
 
-function showNode(out, node, embedded) {
+function showNode(out, node, classes) {
   var graph = node[GRAPH]
   var id = node[ID]
   var tag = id != null? 'article' : 'div'
-  var classes = embedded? 'embedded' : ''
   if (graph) {
     classes += ' graph'
   }
 
   var idattr = id != null? ' id="'+ id + (graph ? '@graph' : '') +'"' : ''
   out('<'+tag + idattr +' class="card '+ classes +'">')
+
   out('<header>')
   if (graph) {
     out('<span class="type"><i class="kw">graph</i></span>')
   }
   if (id != null) {
-    out('<a class="id" href="'+ id +'">'+ (id || '&nbsp;') +'</a>')
+    if (typeof id === 'object') {
+      showQuotedTriple(out, id)
+    } else {
+      out('<a class="id" href="'+ id +'">'+ (id || '&nbsp;') +'</a>')
+    }
   }
   if (TYPE in node) {
     showType(out, node[TYPE])
@@ -166,7 +170,7 @@ function showContents(out, node, inArray) {
       } else {
         out('<div>')
         if (!inArray) showTerm(out, key)
-        showNode(out, value, true)
+        showNode(out, value, 'embedded')
         out('</div>')
       }
     }
@@ -179,6 +183,13 @@ function showTerm(out, key) {
 
 function showRef(out, node) {
   var id = node[ID]
+  if (typeof id === 'object') {
+    out('<div class="ref">')
+    showQuotedTriple(out, id)
+    out('</div>')
+    return
+  }
+
   out('<a class="ref" href="'+ id +'">'+ id +'</a>')
   showAnnotation(out, node)
 }
@@ -232,4 +243,8 @@ function showAnnotation (out, node) {
     showContents(out, annot)
     out('</div>')
   }
+}
+
+function showQuotedTriple (out, id) {
+  showNode(out, id, 'triple')
 }

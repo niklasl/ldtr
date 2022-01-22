@@ -158,19 +158,30 @@ a.ref:hover, a.ref.selected {
   border-top: 0.2em ridge;
 }
 
-.annotation {
-  font-size: 0.8em;
+
+.annotation,
+#view article.triple {
   background-color: #eaeaea;
   border: 1pt dashed #aaa;
   border-radius: 2pt;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0.9em;
-  padding: 0.2em 0.8em 0.2em 0.4em;
   font-style: italic;
   display: inline-block;
   vertical-align: top;
   margin: 0 0 0.4em 0.4em;
   position: relative;
+}
+#view header article.triple.card {
+  margin: 0 0 0.4em;
+  float: right;
+  min-width: 99%;
+}
+.annotation,
+.triple {
+  font-size: 0.9em;
+}
+.annotation {
+  padding: 0.2em 0.8em 0.2em 0.4em;
+  border-top-right-radius: 0.9em;
 }
 .annotation:after {
   content: "";
@@ -184,6 +195,7 @@ a.ref:hover, a.ref.selected {
   border-bottom: none;
   border-left: none;
 }
+
 article.card .annotation div.p {
   margin: 0.1em 0.2em;
 }
