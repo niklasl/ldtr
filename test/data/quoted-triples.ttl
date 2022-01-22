@@ -1,0 +1,10 @@
+prefix : <https://example.org/vocab/>
+base <https://example.org/>
+
+<< </item/1> a :Thing >> :addedIn <v1> ; :removedIn <v3> .
+
+</item/1> :hasTitle _:title .
+<< _:title :mainTitle "Item 1" >> :addedIn <v1>; :removedIn <v2> .
+
+<v1> :added << </item/1> a :Thing >> ,
+    << _:title :mainTitle "Item 1" >> .

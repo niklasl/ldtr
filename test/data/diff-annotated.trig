@@ -3,25 +3,38 @@ base <https://example.org/>
 
 graph <diff-union> {
 
-  </item/1> a :Thing {| :addedIn <rev1>; :removedIn <rev3> |},
-      :Item {| :addedIn <rev3> |} ;
+  </item/1> a :Thing {| :addedIn <v1>; :removedIn <v3> |},
+      :Item {| :addedIn <v3> |} ;
       :hasTitle [
-              :mainTitle "Item 1" {| :addedIn <rev1>; :removedIn <rev2> |} ,
-                  "Item One" {| :addedIn <rev2> |} ;
-              :subtitle "an item" {|  :addedIn <rev3> |}
-          ] {| :addedIn <rev1> |} ;
-      :relatedTo </item/2> {| :addedIn <rev2> |} .
+              :mainTitle "Item 1" {| :addedIn <v1>; :removedIn <v2> |} ,
+                  "Item One" {| :addedIn <v2> |} ;
+              :subtitle "an item" {|  :addedIn <v3> |}
+          ] {| :addedIn <v1> |} ;
+      :relatedTo </item/2> {| :addedIn <v2> |} .
 
 }
 
-graph <diff-removed-fragments> {
+graph <v1;diff> {
 
-  << </item/1> a :Thing >> :addedIn <rev1> ; :removedIn <rev3> .
+  </item/1> a :Thing ;
+    :hasTitle _:title .
+  _:title :mainTitle "Item 1" .
 
-  </item/1> :hasTitle _:title .
-  << _:title :mainTitle "Item 1" >> :addedIn <rev1>; :removedIn <rev2> .
+}
 
-  <rev1> :added << </item/1> a :Thing >> ,
-      << _:title :mainTitle "Item 1" >> .
+graph <v2;diff> {
+
+  </item/1> :relatedTo </item/2> .
+
+  << _:title :mainTitle "Item 1" >> a :Negation .
+  _:title :mainTitle "Item One" .
+
+}
+
+graph <v3;diff> {
+
+  </item/1> a :Item .
+  _:title :subtitle "an item" .
+  << </item/1> a :Thing >> a :Negation .
 
 }
