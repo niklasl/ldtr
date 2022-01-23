@@ -21,10 +21,10 @@ body {
   --refbox: #211;
   --refborder: #763;
 
-  --arrow: #764;
+  --arrow: rgb(103, 111, 111, 0.6);
   --arrowbox: rgba(34, 34, 34, 0.4);
   --arrowlight: rgba(34, 34, 34, 0.8);
-  --arrowback: rgb(103, 111, 111, 0.6);
+  --arrowback: #764;
   --arrowtext: #676f6f;
 }
 

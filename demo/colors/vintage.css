@@ -63,7 +63,7 @@ a.ref:hover, a.ref.selected { box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4); }
 
 span.arrow { color: #676f6f; border: 1px solid #676f6f; }
 span.arrow > a.id { color: #601; }
-path.arrow.rev { stroke: rgb(103, 111, 111, 0.6); }
-#arrowhead-rev { fill: rgb(103, 111, 111, 0.6); }
-path.arrow.rel { stroke: #601; }
-#arrowhead-rel { fill: #601; }
+path.arrow.rev { stroke: #601; }
+#arrowhead-rev { fill: #601; }
+path.arrow.rel { stroke: rgb(103, 111, 111, 0.6); }
+#arrowhead-rel { fill: rgb(103, 111, 111, 0.6); }

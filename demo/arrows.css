@@ -19,19 +19,19 @@ path.arrow {
 }
 
 path.arrow.rev {
-  stroke: rgb(127, 127, 127, 0.6);
+  stroke: #888;
   marker-end: url(#arrowhead-rev);
 }
 #arrowhead-rev {
-  fill: rgb(127, 127, 127, 0.6);
+  fill: #888;
 }
 
 path.arrow.rel {
-  stroke: #888;
+  stroke: rgb(127, 127, 127, 0.6);
   marker-end: url(#arrowhead-rel);
 }
 #arrowhead-rel {
-  fill: #888;
+  fill: rgb(127, 127, 127, 0.6);
 }
 
 span.arrow {
