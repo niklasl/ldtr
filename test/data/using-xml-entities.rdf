@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+    <!ENTITY sdo 'http://schema.org/'>
+]>
+<rdf:RDF xmlns:rdf="&rdf;"
+         xmlns="&sdo;"
+         xml:base="http://example.org/">
+    <CreativeWork rdf:about="/doc">
+        <name xml:lang="en">A Document &amp; a &quot;name&quot;</name>
+        <dateCreated rdf:datatype="&sdo;Date">2016-07-10T14:34:50+0200</dateCreated>
+    </CreativeWork>
+</rdf:RDF>
