@@ -115,7 +115,10 @@ file with a common suffix).
 
 For text-based formats, the input is expected to be a regular string. For XML-
 and HTML-based formats, the input can also be a DOM Document. (Any W3C XML DOM
-Level 2 Core compliant DOMParser and XMLSerializer will do.
+Level 2 Core compliant
+[DOMParser](https://developer.mozilla.org/en-US/docs/Web/API/DOMParser) and
+[XMLSerializer](https://developer.mozilla.org/en-US/docs/Web/API/XMLSerializer)
+will do.)
 
 In a browser, you can use the internals by themselves. See the demo web
 application for an example of how.
@@ -157,7 +160,7 @@ The TriG parser is generated from a grammar file (based on the
 [TriG W3C EBNF Grammar](http://www.w3.org/TR/trig/#sec-grammar)) using
 [PEG.js](http://pegjs.org/).
 
-By default on Node e.g. when using the CLI, LDTR uses
+By default on Node (e.g. when using the CLI) LDTR uses
 [xmldom](https://github.com/xmldom/xmldom) for HTML and XML parsing.
 
 (Caveat: Internal XML entity declarations are
@@ -175,10 +178,15 @@ you're doing.
 To a certain point, this tool can be used as a teaching aid, for showing the
 isomorphisms of different RDF serializations. Note that prefix mechanisms
 (QNames/CURIEs/PNames) are basically only useful in RDF syntaxes for
-*authoring*. They are not intended to be consumed directly, syntactically, from
-the source. Thus, by producing a JSON-LD compliant semi-compact transcript like
-LDTR does, consumers who are unaware of what the tokens really mean (in RDF)
-may be misled to consider them fixed and atomic, instead of the locally defined
-shorthand forms they really are. This is why this form can only be trusted when
-you are in control of the source data.
+*humans*, when reading and writing data directly.
+
+Crucially, they are not intended to be handled directly (syntactically, from
+the source) in code. Thus, by producing a JSON-LD compliant semi-compact
+transcript like LDTR does, consumers who are unaware of what the tokens really
+mean (in RDF) may be misled to consider them fixed and atomic, instead of the
+locally defined shorthand forms they really are. This is why this form can only
+be trusted when you are in control of the source data. When you are, however,
+the compact form can keep both data and code fairly succinct, which *may* be of
+benefit to certain applications. You do trade away general RDF processing by
+doing so though. It's a matter of tradeoffs.
 
