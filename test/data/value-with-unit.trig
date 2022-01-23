@@ -1,4 +1,5 @@
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix : <https://example.net/terms/>
 base <https://example.org/>
 
@@ -13,7 +14,7 @@ graph <common-basic> {
 graph <traditional-structured-value> {
 
   <painting> :height [ rdf:value 32.1 ;
-        :unit <cm>;
+        :unit <cm> {| :note "It can be argued that this should just be the rdf:type." |};
         :measurementTechnique <laser-scanning>;
         :measuredOn "2020-02-11"^^xsd:date
     ] .
@@ -22,8 +23,9 @@ graph <traditional-structured-value> {
 
 graph <subclassed-datatype> {
 
-  # typedef:
-  <cm> rdfs:subClassOf xsd:double ; :matches "\\d+(\\.\\d+)?\\s*(mm|cm|m|km)" .
+  <cm> a rdfs:Datatype ;
+    rdfs:subClassOf xsd:double ;
+    :matches "^(\\d+\\.?|\\d*\\.\\d+)\\s*(mm|cm|m|km)$" .
 
   <painting> :height "32.1"^^<cm> {|
         :measurementTechnique <laser-scanning>;
