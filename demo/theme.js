@@ -4,7 +4,10 @@ let currentstyle = null
 
 export function toggleTheme () {
   lightstyle = document.querySelector('link[rel~=stylesheet].light')
+  if (lightstyle == null) return
+
   darkstyle = document.querySelector('link[rel~=stylesheet].dark')
+  if (darkstyle == null) return
 
   if (currentstyle == null) {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
