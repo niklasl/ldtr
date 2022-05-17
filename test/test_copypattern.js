@@ -19,6 +19,6 @@ tape.test('pattern copy', t => {
     }
     let expected = JSON.parse(fs.readFileSync(datafile('copypattern-1-out.jsonld'), 'utf-8'))
     t.deepEqual(result, expected)
+    t.end()
   })
-  t.end()
 })
