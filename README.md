@@ -67,11 +67,17 @@ through a JSON-LD processor (such as
 control over the shapes and terms of the results.
 
 While primarily designed to produce a native data structure representable as
-JSON-LD, LDTR also includes a *TriG serializer*, which similarly works by
-transcribing the JSON-LD as simply as possible. This imposes some restrictions
-upon the data, due to which advanced features of JSON-LD LDTR can faithfully
-transcribe. (You can always feed it expanded JSON-LD to ensure compatibility
-and fidelity.)
+JSON-LD, LDTR also includes serializers for:
+
+* TriG
+* RDF/XML
+
+These work similarly to the parsers, by transcribing the JSON-LD as directly as
+possible. This "shortcut" imposes some restrictions on the data, depending upon
+which compaction features of JSON-LD that the output format can faithfully
+transcribe. Regular "URI-to-PName" term compaction is guaranteed to work (which
+is the form of compact JSON-LD that the parsers output; representing a kind of
+common intersection between these formats).
 
 ## Install
 
