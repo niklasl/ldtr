@@ -2,6 +2,7 @@
 @prefix : <http://example.net/vocab/> .
 @prefix ns: <http://example.com/ns/> .
 @prefix ns2: <http://example.com/ns/2/> .
+@prefix ns.3: <http://example.com/ns/3/> .
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 base <http://example.org/>
 

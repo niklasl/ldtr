@@ -3,6 +3,7 @@
     "@vocab": "http://example.net/vocab/",
     "ns": "http://example.com/ns/",
     "ns2": "http://example.com/ns/2/",
+    "ns.3": "http://example.com/ns/3/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "@base": "http://example.org/"
   },
