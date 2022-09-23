@@ -66,7 +66,7 @@ function showContext(out, context) {
   out('</div>')
 }
 
-function showNode(out, node, classes) {
+function showNode(out, node, classes = '') {
   var graph = node[GRAPH]
   var id = node[ID]
   var tag = id != null? 'article' : 'div'
