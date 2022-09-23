@@ -165,8 +165,9 @@ export const ldtrEditor = {
     }
 
     let urlParam = `url=${escape(url)}`
+    let editParam = this.params.edit ? '&edit=true' : ''
     let appUrl = this.window.location.toString().replace(/([?&])url=.+&?/,
-                                                    `$1${urlParam}`)
+                                                    `$1${urlParam}${editParam}`)
     if (appUrl.indexOf(urlParam) === -1) {
       let delim = appUrl.indexOf('?') === -1 ? '?' : '&'
       appUrl = `${appUrl}${delim}${urlParam}`
