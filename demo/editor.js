@@ -103,11 +103,23 @@ export const ldtrEditor = {
       let type = this.typeSelect.options[this.typeSelect.selectedIndex].value
       if (type === mediaTypes.jsonld) {
         this.setDataJson(this.currentData)
-      } else if (type === 'text/turtle' || type === mediaTypes.trig) {
-        const serializer = await import('../lib/trig/serializer.js')
-        let chunks = []
-        serializer.serialize(this.currentData, {write (chunk) {chunks.push(chunk)}})
-        this.setDataText(chunks.join(''), type)
+      } else {
+        let modulepromise
+        switch (type) {
+          case 'text/turtle':
+          case mediaTypes.trig:
+          modulepromise = await import('../lib/trig/serializer.js')
+          break
+          case 'application/rdf+xml':
+          modulepromise = await import('../lib/rdfxml/serializer.js')
+          break
+        }
+        if (modulepromise) {
+          const {serialize} = await modulepromise
+          let chunks = []
+          serialize(this.currentData, {write (chunk) {chunks.push(chunk)}})
+          this.setDataText(chunks.join(''), type)
+        }
       }
     })
 
