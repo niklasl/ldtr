@@ -16,7 +16,7 @@ import {
   VOCAB,
 } from '../lib/jsonld/keywords.js'
 
-const ANNOTATION = '@annotation'
+import { ANNOTATION, ANNOTATED_TYPE_KEY } from '../lib/jsonld/star.js'
 
 export function visualize(elem, result, params = {}) {
   var chunks = []
@@ -115,7 +115,7 @@ function showType(out, types) {
   out('<span class="type">')
   if (!Array.isArray(types)) types = [types]
   for (let type of types) {
-    let v = typeof type === 'object' ? type[TYPE] : type
+    let v = typeof type === 'object' ? type[ANNOTATED_TYPE_KEY] : type
     out('<b>'+ v +'</b>')
     showAnnotation(out, type)
   }

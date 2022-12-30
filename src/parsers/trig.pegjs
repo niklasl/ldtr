@@ -8,7 +8,7 @@
 
     const TYPE = '@type';
     const ANNOTATION = '@annotation';
-    const ANNOTATED_TYPE_KEY = TYPE; // '@index' // '@set'
+    const ANNOTATED_TYPE_KEY = '@set'; // TYPE // '@index'
     const TYPEANNOTATION = null;//'@type@annotation';
     const KEEP_REDUNDANT_ANNOTATED_TYPE = false; // true;
     const TYPEANNOTATION_DECL = {
