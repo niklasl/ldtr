@@ -261,7 +261,7 @@ triples2 =
     }
     / collection:collection pos:predicateObjectList IGNORE '.'
     {
-        return pos? reducePairs(bnpairs, pos) : bnpairs;
+        return pos? reducePairs(collection, pos) : collection;
     }
 
 wrappedGraph =
