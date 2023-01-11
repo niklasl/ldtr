@@ -9,22 +9,31 @@
     <script type="module">
       import {ldtrEditor} from './editor.js'
       ldtrEditor.init(window)
+      window.ldtrEditor = ldtrEditor
     </script>
   </head>
   <body>
     <section id="view">
     </section>
+    <section id="syntax">
+      <textarea rows="40" spellcheck="false" readonly></textarea>
+      <menu>
+        <select id="syntaxtypesel"></select>
+      </menu>
+    </section>
     <section id="edit">
       <textarea id="editor" rows="40" spellcheck="false"></textarea>
       <menu>
+        <button id="togglesyntax" title="Toggle syntax (S)">{S}</button>
         <input id="url" size="48" />
-        <button id="reload" title="(Re-)load">🗘</button>
+        <button id="reload" title="(Re-)load">&#11118;</button>
         <select id="typesel"></select>
       </menu>
       <div id="status"></div>
     </section>
     <section id="toggles">
       <button id="darktoggle" title="Toggle dark/light mode (D)">&#x25d0;</button>
+      <button id="togglearrows" title="Toggle arrows (A)">&#10543;</button>
       <button id="toggleedit" title="Toggle editor (E)">&nbsp;</button>
     </section>
   </body>

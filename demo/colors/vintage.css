@@ -2,12 +2,12 @@ body {
   --border: #aaa;
 }
 
-#view {
+body {
   background-color: #fffefa;
   color: #000;
 }
 
-#editor {
+textarea {
   background-color: #ffe;
   color: #014;
 }

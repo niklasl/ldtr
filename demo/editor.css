@@ -13,10 +13,28 @@
   }
 }
 
+body {
+  color: #000;
+  --border: #aaa;
+  --databox: #eee;
+}
+
+body {
+  scrollbar-color: var(--border) var(--databox);
+}
+body ::-webkit-scrollbar {
+  width: 4px;
+}
+body ::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+}
+body ::-webkit-scrollbar-track {
+  background-color: var(--databox);
+}
+
 #view {
   font-family: Verdana, "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;;
   font-size: 12px;
-  color: #000;
   position: fixed;
   top: 0;
   right: 0;
@@ -24,6 +42,18 @@
   left: 0;
   overflow: auto;
   padding: 1em 1.5em;
+}
+
+body.syntax #view {
+  visibility: hidden;
+}
+
+#syntax {
+  visibility: hidden;
+}
+
+body.syntax #syntax {
+  visibility: visible;
 }
 
 body.loading:before {
@@ -47,25 +77,44 @@ body.edit #view {
   right: 50%;
 }
 
-#edit {
+#edit,
+#syntax {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
-  left: 50%;
   overflow: auto;
+}
+
+#edit {
+  left: 50%;
   visibility: hidden;
 }
 
+body.edit #syntax {
+  right: 50%;
+  left: 0%;
+}
+
 body.edit #edit {
-  visibility: visible;
   background-color: #eee;
+}
+
+body.edit #edit,
+body.edit #syntax {
   box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.4);
   padding: 0.2em;
 }
 
+body.edit #edit {
+  visibility: visible;
+}
+
 #editor {
   visibility: hidden;
+}
+
+textarea {
   font-family: Courier;
   font-size: 12px;
   width: 99%;
@@ -98,7 +147,7 @@ body.edit #view article.card {
 
 menu {
   margin: 0;
-  padding: 0 1em;
+  padding: 0 0.1em;
 }
 
 section#toggles {

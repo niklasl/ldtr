@@ -32,12 +32,12 @@ body.loading:before {
   color: #fff;
 }
 
-#view {
+body {
   background-color: var(--wall);
   color: var(--text);
 }
 
-#editor,
+textarea,
 body.edit #edit,
 input, button, select,
 #status {

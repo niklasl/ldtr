@@ -9,10 +9,17 @@ import {visualize} from './visualizer.js'
 import {renderArrows} from './arrows.js'
 import {toggleTheme} from './theme.js'
 
+const mediaTypeNames = {}
+for (const name in mediaTypes) {
+  const mediaType = mediaTypes[name]
+  if (mediaTypeNames[mediaType]) continue
+  mediaTypeNames[mediaTypes[name]] = name
+}
+
 export const ldtrEditor = {
 
   async init (window) {
-    this.params = this.parseParams(window.location.search.substring(1))
+    this.params = parseParams(window.location.search.substring(1))
     this.window = window
 
     window.addEventListener('load', () => {
@@ -23,49 +30,23 @@ export const ldtrEditor = {
     })
   },
 
-  parseParams (query) {
-    return query.split(/\&/).reduce(function (map, pair) {
-      var tuple = pair.split(/=/)
-      map[tuple[0]] = tuple[1] || true
-      return map
-    }, {})
-  },
-
   setupWidgetsAndHandlers () {
     let document = this.window.document
     this.body = document.body
-    this.viewDiv = document.querySelector('#view')
-    this.editorArea = document.querySelector('#editor')
-    this.statusDiv = document.querySelector('#status')
-    this.urlInput = document.querySelector('#url')
-    this.typeSelect = document.querySelector('select#typesel')
-    let reload = document.querySelector('#reload')
-    this.toggleedit = document.querySelector('#toggleedit')
 
-    if (!this.params.url || this.params.edit) {
-      this.body.classList.add('edit')
-    }
+    this.setupView()
+    this.setupModeControls()
+    this.setupEditAreaControls()
 
-    let darktoggle = document.querySelector('#darktoggle')
-    darktoggle.addEventListener('click', toggleTheme)
-    toggleTheme()
-
-    this.editorArea.onkeyup = function () {
-      this.onEdit()
-    }.bind(this)
-
-    const toggleEditLabel = on => {
-      this.toggleedit.textContent = on ? '»' : '«'
-    }
-    toggleEditLabel(this.body.classList.contains('edit'))
-    const toggleEdit = () => {
-      toggleEditLabel(this.body.classList.toggle('edit'))
-    }
-    this.toggleedit.addEventListener('click', toggleEdit)
-
-    reload.addEventListener('click', async evt => {
-      this.loadData(this.urlInput.value)
+    this.window.addEventListener('popstate', evt => {
+      this.currentData = evt.state
+      this.setEditorData(toJson(this.currentData))
+      this.process(this.currentData)
     })
+  },
+
+  setupView() {
+    this.viewDiv = document.querySelector('#view')
 
     document.addEventListener('dblclick', async evt => {
       let link = evt.target.closest('a:link')
@@ -86,42 +67,60 @@ export const ldtrEditor = {
         })
       }
     })
+  },
 
-    this.window.addEventListener('popstate', evt => {
-      this.currentData = evt.state
-      this.setDataJson(this.currentData)
-      this.process(this.currentData)
-    })
-
-    for (let type in transcribers.transcribers) {
-      this.typeSelect.add(new Option(type, type))
-      this.typeSelect.selectedOptions[0].value
+  setupModeControls() {
+    let toggleedit = document.querySelector('#toggleedit')
+    const toggleEditLabel = on => {
+      toggleedit.textContent = on ? '»' : '«'
     }
-
-    this.typeSelect.addEventListener('change', async evt => {
-      // convertEditorData
-      let type = this.typeSelect.options[this.typeSelect.selectedIndex].value
-      if (type === mediaTypes.jsonld) {
-        this.setDataJson(this.currentData)
-      } else {
-        let modulepromise
-        switch (type) {
-          case 'text/turtle':
-          case mediaTypes.trig:
-          modulepromise = await import('../lib/trig/serializer.js')
-          break
-          case 'application/rdf+xml':
-          modulepromise = await import('../lib/rdfxml/serializer.js')
-          break
-        }
-        if (modulepromise) {
-          const {serialize} = await modulepromise
-          let chunks = []
-          serialize(this.currentData, {write (chunk) {chunks.push(chunk)}})
-          this.setDataText(chunks.join(''), type)
-        }
+    toggleEditLabel(this.body.classList.contains('edit'))
+    const toggleEdit = () => {
+      let on = this.body.classList.toggle('edit')
+      this.params.edit = on
+      toggleEditLabel(on)
+      if (!on && this.params.syntax) {
+        toggleSyntax()
       }
+    }
+    toggleedit.addEventListener('click', toggleEdit)
+
+    let togglesyntax = document.querySelector('#togglesyntax')
+    const toggleSyntax = () => {
+      if (this.params.syntax) {
+         this.hadSyntax = this.params.syntax
+        delete this.params.syntax
+      } else {
+        this.params.syntax = this.hadSyntax || 'jsonld'
+        this.params.edit = true
+      }
+      this.updateView()
+    }
+    togglesyntax.addEventListener('click', toggleSyntax)
+
+    this.syntaxArea = document.querySelector('#syntax > textarea')
+
+    this.syntaxTypeSelect = document.querySelector('select#syntaxtypesel')
+    setupTypeSelect(this.syntaxTypeSelect, async type => {
+      this.params.syntax = mediaTypeNames[type]
+      let text = await serializeData(this.currentData, type)
+      setDataText(text, type, this.syntaxArea, this.syntaxTypeSelect)
     })
+
+    let togglearrows = document.querySelector('#togglearrows')
+    const toggleArrows = () => {
+      if (this.params.arrows === 'off') {
+        delete this.params.arrows
+      } else {
+        this.params.arrows = 'off'
+      }
+      this.viewData()
+    }
+    togglearrows.addEventListener('click', toggleArrows)
+
+    let darktoggle = document.querySelector('#darktoggle')
+    darktoggle.addEventListener('click', toggleTheme)
+    toggleTheme()
 
     document.addEventListener('keydown', evt => {
       if (evt.target.closest('input, textarea, select')) {
@@ -137,8 +136,64 @@ export const ldtrEditor = {
         case 'D':
           toggleTheme()
           break
+        case 'S':
+          toggleSyntax()
+          break
+        case 'A':
+          toggleArrows()
+          break
       }
     })
+  },
+
+  setupEditAreaControls() {
+    this.editorArea = document.querySelector('#editor')
+
+    this.editorArea.onkeyup = function () {
+      this.onEdit()
+    }.bind(this)
+
+    this.statusDiv = document.querySelector('#status')
+    this.urlInput = document.querySelector('#url')
+
+    let reload = document.querySelector('#reload')
+    reload.addEventListener('click', async evt => {
+      this.loadData(this.urlInput.value)
+    })
+
+    this.typeSelect = document.querySelector('select#typesel')
+    setupTypeSelect(this.typeSelect, async type => {
+      let text = await serializeData(this.currentData, type)
+      this.setEditorData(text, type)
+    })
+  },
+
+  updateView () {
+    if (!this.params.url || this.params.edit) {
+      this.body.classList.add('edit')
+    }
+
+    if (this.params.syntax) {
+      this.body.classList.add('syntax')
+      this.viewSyntax()
+    } else {
+      this.body.classList.remove('syntax')
+      this.viewData()
+    }
+  },
+
+  async viewSyntax () {
+    let type = mediaTypes[this.params.syntax]
+    let text = await serializeData(this.currentData, type)
+    setDataText(text, type, this.syntaxArea, this.syntaxTypeSelect)
+  },
+
+  async viewData () {
+    visualize(this.viewDiv, this.currentData, this.params)
+    addViewControls(this.viewDiv)
+    if (this.params.arrows !== 'off') {
+      renderArrows(this.viewDiv)
+    }
   },
 
   async loadData (url, initial = false) {
@@ -165,8 +220,9 @@ export const ldtrEditor = {
       type = guessMediaType(url)
     }
 
-    this.setDataText(data, type)
+    this.setEditorData(data, type)
 
+    this.statusDiv.innerText = ''
     await this.parseAndProcess()
 
     this.body.classList.remove('loading')
@@ -176,14 +232,7 @@ export const ldtrEditor = {
       this.window.location = this.window.location.hash
     }
 
-    let urlParam = `url=${escape(url)}`
-    let editParam = this.params.edit ? '&edit=true' : ''
-    let appUrl = this.window.location.toString().replace(/([?&])url=.+&?/,
-                                                    `$1${urlParam}${editParam}`)
-    if (appUrl.indexOf(urlParam) === -1) {
-      let delim = appUrl.indexOf('?') === -1 ? '?' : '&'
-      appUrl = `${appUrl}${delim}${urlParam}`
-    }
+    let appUrl = this.buildAppUrl(url)
 
     let title = this.window.document.title
     if (initial) {
@@ -191,6 +240,26 @@ export const ldtrEditor = {
     } else {
       this.window.history.pushState(this.currentData, title, appUrl)
     }
+  },
+
+  buildAppUrl (url) {
+    let urlParam = `url=${escape(url)}`
+    let params = [urlParam]
+    if (this.params.edit) params.push('edit=true')
+    if (this.params.syntax) params.push(`syntax=${this.params.syntax}`)
+    if (this.params.arrows) params.push(`arrows=${this.params.arrows}`)
+    let loc = this.window.location.toString()
+    let appUrl = loc.replace(/([?&])url=.+&?/, `$1${params.join('&')}`)
+    if (appUrl.indexOf(urlParam) === -1) {
+      let delim = appUrl.indexOf('?') === -1 ? '?' : '&'
+      appUrl = `${appUrl}${delim}${urlParam}`
+    }
+
+    return appUrl
+  },
+
+  setEditorData (data, type) {
+    setDataText(data, type, this.editorArea, this.typeSelect)
   },
 
   async onEdit () {
@@ -208,17 +277,8 @@ export const ldtrEditor = {
     }
     this.statusDiv.innerText = 'Line: '+ row +' Col: '+ col +' \n'
 
+    // TODO: only if this.editorArea was modified...
     this.parseAndProcess()
-  },
-
-  setDataText (data, type) {
-    this.editorArea.value = data
-    this.typeSelect.selectedIndex = Array.prototype.findIndex.call(
-        this.typeSelect.options, it => it.value === type)
-  },
-
-  setDataJson (data) {
-    this.setDataText(JSON.stringify(data, null, 2), mediaTypes.jsonld)
   },
 
   async parseAndProcess () {
@@ -240,15 +300,16 @@ export const ldtrEditor = {
     this.currentData = result
 
     this.statusDiv.classList.remove('error')
-    this.statusDiv.innerText += "OK"
+    if (!this.statusDiv.innerText.endsWith('OK')) {
+      this.statusDiv.innerText += "OK"
+    }
 
     if (this.params.indexed) {
       const indexer = await import('../lib/util/indexer.js')
-      result = indexer.index(result)
+      this.currentData = indexer.index(result)
     }
 
-    visualize(this.viewDiv, result, this.params)
-    renderArrows(this.viewDiv)
+    this.updateView()
   },
 
   async parseData () {
@@ -270,4 +331,106 @@ export const ldtrEditor = {
     return href
   }
 
+}
+
+function parseParams (query) {
+  return query.split(/\&/).reduce(function (map, pair) {
+    var tuple = pair.split(/=/)
+    map[tuple[0]] = tuple[1] || true
+    return map
+  }, {})
+}
+
+function toJson (data) {
+  return JSON.stringify(data, null, 2)
+}
+
+async function serializeData(data, type) {
+  if (type === mediaTypes.jsonld) {
+    return toJson(data)
+  } else {
+    let modulepromise
+    switch (type) {
+      case mediaTypes.ttl:
+      case mediaTypes.trig:
+      modulepromise = await import('../lib/trig/serializer.js')
+      break
+      case mediaTypes.rdf:
+      modulepromise = await import('../lib/rdfxml/serializer.js')
+      break
+    }
+    if (modulepromise) {
+      const {serialize} = await modulepromise
+      let chunks = []
+      serialize(data, {write (chunk) {chunks.push(chunk)}})
+      return chunks.join('')
+    }
+  }
+}
+
+function addViewControls(container) {
+  const document = container.ownerDocument
+
+  document.querySelectorAll('[id].card').forEach(target => {
+    target.addEventListener('click', evt => {
+      if (evt.ctrlKey || evt.metaKey) return
+
+      target.classList.toggle('selected')
+      evt.preventDefault()
+    })
+  })
+
+  document.querySelectorAll('.card a.ref').forEach(link => {
+    let targetId = link.attributes.href.value
+    let target = document.getElementById(targetId)
+    if (!target) return
+
+    let card = link.closest('[id].card')
+
+    link.addEventListener('click', evt => {
+      if (evt.ctrlKey || evt.metaKey) return
+
+      card.classList.remove('selected')
+      link.classList.toggle('selected')
+      evt.stopPropagation()
+      evt.preventDefault()
+      container.scrollTo({
+        left: target.offsetLeft,
+        top: target.offsetTop,
+        behavior: 'smooth'
+      })
+      target.classList.add('selected')
+    })
+
+  })
+}
+
+const mediaTypeLabels = {
+  ttl: 'Turtle',
+  trig: 'TriG',
+  jsonld: 'JSON-LD',
+  xml: 'RDF/XML'
+}
+
+function setupTypeSelect(typeSelect, onTypeSelect) {
+  for (const typename in mediaTypeLabels) {
+    const label = mediaTypeLabels[typename]
+    const type = mediaTypes[typename]
+    if (type in transcribers.transcribers) {
+      typeSelect.add(new Option(label, type))
+      typeSelect.selectedOptions[0].value
+    }
+  }
+
+  typeSelect.addEventListener('change', async evt => {
+    // convertEditorData
+    let type = typeSelect.options[typeSelect.selectedIndex].value
+    onTypeSelect(type)
+  })
+}
+
+function setDataText (data, type, formElement, typeSelect) {
+  formElement.value = data
+  typeSelect.selectedIndex = Array.prototype.findIndex.call(
+      typeSelect.options, it => it.value === type)
 }

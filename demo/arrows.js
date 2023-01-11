@@ -26,15 +26,6 @@ export function renderArrows(container) {
 
   computePaths = []
 
-  document.querySelectorAll('[id].card').forEach(target => {
-    target.addEventListener('click', evt => {
-      if (evt.ctrlKey || evt.metaKey) return
-
-      target.classList.toggle('selected')
-      evt.preventDefault()
-    })
-  })
-
   document.querySelectorAll('.card a.ref').forEach(link => {
     let targetId = link.attributes.href.value
     let target = document.getElementById(targetId)
@@ -119,21 +110,6 @@ export function renderArrows(container) {
     computePath()
     computePaths.push(computePath)
 
-    link.addEventListener('click', evt => {
-      if (evt.ctrlKey || evt.metaKey) return
-
-      card.classList.remove('selected')
-      link.classList.toggle('selected')
-      evt.stopPropagation()
-      evt.preventDefault()
-      container.scrollTo({
-        left: target.offsetLeft,
-        top: target.offsetTop,
-        behavior: 'smooth'
-      })
-      target.classList.add('selected')
-    })
-
     card.addEventListener('mouseover', evt => {
       arrow.classList.add('rel')
     })
@@ -194,4 +170,6 @@ export function renderArrows(container) {
 
   window.removeEventListener('resize', recomputePaths)
   window.addEventListener('resize', recomputePaths)
+
+  return svg
 }
