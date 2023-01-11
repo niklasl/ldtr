@@ -56,8 +56,14 @@ with some minimal provisioning for different runtimes.
 
 * Experimental support for
   [RDF-star](https://w3c.github.io/rdf-star/cg-spec/2021-12-17.html) expressed
-  as **TriG-star** and [JSON-LD-star](https://json-ld.github.io/json-ld-star/) is
-  included.
+  as **TriG-star** and [JSON-LD-star](https://json-ld.github.io/json-ld-star/).
+
+  For RDF/XML the [asserted reification shorthand using
+  rdf:ID](https://www.w3.org/TR/rdf-syntax-grammar/#section-Syntax-reifying) is
+  *directly* mapped to RDF-star annotations. This goes beyond any spec.
+
+* Experimental support for [named graphs in
+  RDF/XML](https://www.w3.org/2009/07/NamedGraph).
 
 ## Output Forms and Formats
 
@@ -70,7 +76,7 @@ While primarily designed to produce a native data structure representable as
 JSON-LD, LDTR also includes serializers for:
 
 * TriG
-* RDF/XML
+* RDF/XML (including named graphs and RDF-star annotations)
 
 These work similarly to the parsers, by transcribing the JSON-LD as directly as
 possible. This "shortcut" imposes some restrictions on the data, depending upon
