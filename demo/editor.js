@@ -25,7 +25,10 @@ export const ldtrEditor = {
     window.addEventListener('load', () => {
       this.setupWidgetsAndHandlers()
       if (this.params.url) {
-        this.loadData(decodeURIComponent(this.params.url), true)
+        this.loadData(decodeURIComponent(this.params.url))
+      } else {
+        this.params.edit = true
+        this.updateView()
       }
     })
   },
@@ -40,6 +43,8 @@ export const ldtrEditor = {
 
     this.window.addEventListener('popstate', evt => {
       this.currentData = evt.state
+      this.params = parseParams(window.location.search.substring(1))
+      this.previousDataUrl = this.params.url
       this.setEditorData(toJson(this.currentData))
       this.process(this.currentData)
     })
@@ -57,7 +62,6 @@ export const ldtrEditor = {
         let href = link.attributes.href.value
         href = this.expandCurie(href)
 
-        console.log(`Loading ${href}...`)
         await this.loadData(href)
 
         this.viewDiv.scrollTo({
@@ -70,22 +74,22 @@ export const ldtrEditor = {
   },
 
   setupModeControls() {
-    let toggleedit = document.querySelector('#toggleedit')
-    const toggleEditLabel = on => {
-      toggleedit.textContent = on ? '»' : '«'
-    }
-    toggleEditLabel(this.body.classList.contains('edit'))
+    this.toggles = []
+
     const toggleEdit = () => {
-      let on = this.body.classList.toggle('edit')
-      this.params.edit = on
-      toggleEditLabel(on)
-      if (!on && this.params.syntax) {
+      this.params.edit = !this.params.edit
+      if (!this.params.edit && this.params.syntax) {
         toggleSyntax()
+      } else {
+        this.updateView()
       }
     }
+    let toggleedit = document.querySelector('#toggleedit')
     toggleedit.addEventListener('click', toggleEdit)
+    this.toggles.push(() => {
+      toggleedit.textContent = this.params.edit ? '»' : '«'
+    })
 
-    let togglesyntax = document.querySelector('#togglesyntax')
     const toggleSyntax = () => {
       if (this.params.syntax) {
          this.hadSyntax = this.params.syntax
@@ -96,6 +100,7 @@ export const ldtrEditor = {
       }
       this.updateView()
     }
+    let togglesyntax = document.querySelector('#togglesyntax')
     togglesyntax.addEventListener('click', toggleSyntax)
 
     this.syntaxArea = document.querySelector('#syntax > textarea')
@@ -114,7 +119,7 @@ export const ldtrEditor = {
       } else {
         this.params.arrows = 'off'
       }
-      this.viewData()
+      this.updateView()
     }
     togglearrows.addEventListener('click', toggleArrows)
 
@@ -169,8 +174,10 @@ export const ldtrEditor = {
   },
 
   updateView () {
-    if (!this.params.url || this.params.edit) {
+    if (this.params.edit) {
       this.body.classList.add('edit')
+    } else {
+      this.body.classList.remove('edit')
     }
 
     if (this.params.syntax) {
@@ -180,6 +187,12 @@ export const ldtrEditor = {
       this.body.classList.remove('syntax')
       this.viewData()
     }
+
+    for (let toggle of this.toggles) {
+      toggle()
+    }
+
+    this.updateAppUrl()
   },
 
   async viewSyntax () {
@@ -189,6 +202,9 @@ export const ldtrEditor = {
   },
 
   async viewData () {
+    if (!this.currentData) {
+      return
+    }
     visualize(this.viewDiv, this.currentData, this.params)
     addViewControls(this.viewDiv)
     if (this.params.arrows !== 'off') {
@@ -196,7 +212,7 @@ export const ldtrEditor = {
     }
   },
 
-  async loadData (url, initial = false) {
+  async loadData (url) {
     if (!url) return
 
     this.body.classList.add('loading')
@@ -215,6 +231,7 @@ export const ldtrEditor = {
     if (data.nodeType === 9) {
       data = data.documentElement.outerHTML
     }
+    this.params.url = url
     this.urlInput.value = url
     if (!(type in transcribers.transcribers)) {
       type = guessMediaType(url)
@@ -231,29 +248,35 @@ export const ldtrEditor = {
     if (this.window.location.hash) {
       this.window.location = this.window.location.hash
     }
+  },
 
-    let appUrl = this.buildAppUrl(url)
+  updateAppUrl () {
+    let appUrl = this.buildAppUrl()
 
     let title = this.window.document.title
-    if (initial) {
-      this.window.history.replaceState(this.currentData, title, appUrl)
-    } else {
+
+    let changedDataUrl = this.params.url != null && this.previousDataUrl != this.params.url
+    if (this.params.url) {
+      this.previousDataUrl = this.params.url
+    }
+
+    if (changedDataUrl) {
       this.window.history.pushState(this.currentData, title, appUrl)
+    } else {
+      this.window.history.replaceState(this.currentData, title, appUrl)
     }
   },
 
-  buildAppUrl (url) {
-    let urlParam = `url=${escape(url)}`
-    let params = [urlParam]
+  buildAppUrl () {
+    let params = []
+    if (this.params.url) params.push(`url=${escape(this.params.url)}`)
     if (this.params.edit) params.push('edit=true')
     if (this.params.syntax) params.push(`syntax=${this.params.syntax}`)
     if (this.params.arrows) params.push(`arrows=${this.params.arrows}`)
     let loc = this.window.location.toString()
-    let appUrl = loc.replace(/([?&])url=.+&?/, `$1${params.join('&')}`)
-    if (appUrl.indexOf(urlParam) === -1) {
-      let delim = appUrl.indexOf('?') === -1 ? '?' : '&'
-      appUrl = `${appUrl}${delim}${urlParam}`
-    }
+
+    let query = '?' + params.join('&')
+    let appUrl = loc.replace(/(\?.*)?$/, query)
 
     return appUrl
   },
@@ -335,8 +358,11 @@ export const ldtrEditor = {
 
 function parseParams (query) {
   return query.split(/\&/).reduce(function (map, pair) {
-    var tuple = pair.split(/=/)
-    map[tuple[0]] = tuple[1] || true
+    let [key, value] = pair.split(/=/)
+    if (key === 'url') {
+      value = unescape(value)
+    }
+    map[key] = value || true
     return map
   }, {})
 }
