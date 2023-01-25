@@ -122,6 +122,9 @@ export const ldtrEditor = {
       this.updateView()
     }
     togglearrows.addEventListener('click', toggleArrows)
+    this.toggles.push(() => {
+      togglearrows.textContent = this.params.arrows === 'off' ? '⤯' : '⤤'
+    })
 
     let darktoggle = document.querySelector('#darktoggle')
     darktoggle.addEventListener('click', toggleTheme)
