@@ -135,6 +135,10 @@ body.edit #view article.card {
   overflow: auto;
 }
 
+body.edit #view article.card.graph {
+  max-width: 99%;
+}
+
 #status {
   padding: 0 1em;
   z-index: 1;

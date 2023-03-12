@@ -33,7 +33,7 @@ article.card.graph {
   border-radius: 3px;
   box-shadow: none;
   margin: 1em 2em 1em 0;
-  max-width: 96em;
+  max-width: 48%;
 }
 
 article.card.graph > header > .id {
