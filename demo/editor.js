@@ -317,6 +317,7 @@ export const ldtrEditor = {
       this.statusDiv.classList.add('error')
       this.statusDiv.innerText += e.name +' at Line: '+ e.location.start.line
         +' Col: '+ e.location.start.column +'\n'+ e.message
+      this.updateView()
       return
     }
     this.process(result)
