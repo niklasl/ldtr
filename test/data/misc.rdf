@@ -11,5 +11,6 @@
                 <comment rdf:parseType="Literal">Just <em>someone</em>.</comment>
             </Person>
         </creator>
+        <comment rdf:value="Structured text" inLanguage="en"/>
     </CreativeWork>
 </rdf:RDF>
