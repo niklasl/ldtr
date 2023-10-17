@@ -29,7 +29,11 @@
             "@value": "Just <em xmlns=\"http://schema.org/\">someone</em>."
           }
         }
-      ]
+      ],
+      "comment": {
+        "rdf:value": "Structured text",
+        "inLanguage": "en"
+      }
     }
   ]
 }
