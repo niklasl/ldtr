@@ -8,9 +8,11 @@
 
     const TYPE = '@type';
     const ANNOTATION = '@annotation';
-    const ANNOTATED_TYPE_KEY = '@set'; // TYPE // '@index'
-    const TYPEANNOTATION = null;//'@type@annotation';
-    const KEEP_REDUNDANT_ANNOTATED_TYPE = false; // true;
+    const QUOTED = '@quoted';
+    const ANNOTATED_TYPE_KEY = '@set'; // TODO: '@id';
+    const RDF_TYPE = {"rdf:type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"};
+    const TYPEANNOTATION = null; // '@type@annotation';
+    const KEEP_REDUNDANT_ANNOTATED_TYPE = true;
     const TYPEANNOTATION_DECL = {
         [TYPEANNOTATION]: {
             "@id": TYPE,
@@ -19,7 +21,7 @@
     };
     //const ANNOTATED_OBJECTS_KEY = '@object';
 
-    const TRIPLE_KEY = '@id';
+    const TRIPLE_KEY = '@id' // TODO: '@triple';
 
     function assign(target, source) {
         for (var key in source) {
@@ -67,12 +69,18 @@
                     o[ANNOTATED_OBJECTS_KEY] = o[ANNOTATED_OBJECTS_KEY]['@id']
                 } else
                 */
+                //if (QUOTED in o) {
+                //    if ('@id' in o[QUOTED]) {
+                //        o[QUOTED] = o[QUOTED]['@id']
+                //    }
+                //}
                 if ('@id' in o) {
                     if (ANNOTATION in o) {
                         o = {
                             [ANNOTATED_TYPE_KEY]: o['@id'],
                             [ANNOTATION]: o[ANNOTATION]
                         }
+                        if (ANNOTATED_TYPE_KEY === '@id') o[PNAME_TAG] = true
                     } else {
                         o = o['@id']
                     }
@@ -90,32 +98,63 @@
 
         let plain = [];
         let annotated = {};
-        let anyannot = false;
+        let anyannot = null;
+        let annotContext = null;
+
+        let typepair = {};
 
         for (let o of objectList) {
             let reduced = reducePname(o);
             if (typeof reduced === 'object' && TYPEANNOTATION) {
-                anyannot = true;
+                anyannot = TYPEANNOTATION;
+                annotContext = TYPEANNOTATION_DECL;
                 let typevalue = reduced[ANNOTATED_TYPE_KEY];
                 annotated[typevalue] = reduced[ANNOTATION];
                 if (KEEP_REDUNDANT_ANNOTATED_TYPE) {
                     plain.push(typevalue);
                 }
+            } else if (typeof reduced === 'object' && ANNOTATED_TYPE_KEY === '@id') {
+                let typevalue = reduced[ANNOTATED_TYPE_KEY];
+                annotated = reduced;
+                anyannot = 'rdf:type';
+                annotContext = RDF_TYPE;
+                if (typevalue != null) {
+                    plain.push(typevalue);
+                }
             } else {
                 plain.push(reduced);
             }
+            if (anyannot) {
+                add(typepair, anyannot, annotated);
+            }
         }
 
-        let typepair = {};
         if (plain.length > 0) {
             typepair[TYPE] = !isObjectArray ? plain[0] : plain;
         }
         if (anyannot) {
-            typepair['@context'] = TYPEANNOTATION_DECL
-            typepair[TYPEANNOTATION] = annotated;
+            if (annotContext) {
+                Object.assign(typepair, {'@context': annotContext})
+            }
         }
 
         return typepair;
+    }
+
+    function add(owner, key, value) {
+        var existing = owner[key];
+        if (typeof existing !== 'undefined') {
+            if (!Array.isArray(existing)) {
+                existing = [existing];
+            }
+            if (Array.isArray(value)) {
+                existing = existing.concat(value);
+            } else {
+                existing.push(value);
+            }
+            value = existing;
+        }
+        owner[key] = value;
     }
 
     function reducePairs(subject, pairs) {
@@ -128,23 +167,21 @@
             }
             subject = {'@id': subject};
         }
+        let quoted = {}
         for (var pair of pairs) {
+            let owner = subject
+            if (QUOTED in pair) {
+                owner = quoted
+                pair = pair[QUOTED]
+            }
             for (var key in pair) {
                 var value = pair[key];
-                var existing = subject[key];
-                if (typeof existing !== 'undefined') {
-                    if (!Array.isArray(existing)) {
-                        existing = [existing];
-                    }
-                    if (Array.isArray(value)) {
-                        existing = existing.concat(value);
-                    } else {
-                        existing.push(value);
-                    }
-                    value = existing;
-                }
-                subject[key] = value;
+                add(owner, key, value);
             }
+        }
+        for (key in quoted) {
+            subject[QUOTED] = quoted
+            break
         }
         return subject;
     }
@@ -332,9 +369,9 @@ predicateObjectList =
 
 objectList =
     //first:object remainder:(IGNORE ',' IGNORE  object:object { return object; } )*
-    first:(object:object IGNORE annotation:annotation? { return packAnnotation(object, annotation) })
+    first:(qObject:qObject IGNORE annotation:annotation? { return packAnnotation(qObject, annotation) })
     remainder:(IGNORE ',' IGNORE
-               annotated:(object:object IGNORE annotation:annotation? { return packAnnotation(object, annotation) }) { return annotated })*
+               annotated:(qObject:qObject IGNORE annotation:annotation? { return packAnnotation(qObject, annotation) }) { return annotated })*
     {
         if (remainder.length > 0) {
             var objects = [first];
@@ -355,7 +392,9 @@ verb =
 
 subject = iri / blank / quotedTriple
 predicate = iri
-object = iri / blank / blankNodePropertyList / literal / quotedTriple
+qObject = object:(qObject2 / object)
+qObject2 = '<<' IGNORE object:object IGNORE '>>' { return {'@quoted': object} }
+object = iri / blank / blankNodePropertyList / literal / quotedTriple / wrappedGraph
 
 literal =
     IGNORE literal:(RDFLiteral / NumericLiteral / BooleanLiteral) IGNORE
@@ -377,17 +416,25 @@ collection = IGNORE '(' IGNORE collection:object* IGNORE ')' IGNORE
     }
 
 quotedTriple = IGNORE '<<' IGNORE s:qtSubject IGNORE p:verb IGNORE o:qtObject IGNORE '>>' IGNORE {
-    let obj = reducePairs(s, [toPair(p, o)])
+    let obj = reducePairs(s, [toPair({verb: p}, o)])
     return { '@id': obj }
 }
 
 qtSubject = iri / BlankNode / quotedTriple
 qtObject = iri / BlankNode / literal / quotedTriple
 
-annotation =
-    IGNORE '{|' pos:predicateObjectList '|}' IGNORE
+annotation = starAnnotation / nodeAnnotation
+
+starAnnotation =
+    IGNORE '{|' idOrPos:((IGNORE '@' IGNORE id:labelOrSubject { return id }) / pos:predicateObjectList { return reducePairs({}, pos) }) '|}' IGNORE
     {
-        return reducePairs({}, pos);
+        return idOrPos;
+    }
+
+nodeAnnotation =
+    IGNORE '*' IGNORE '{' nodes:(iri / blank / blankNodePropertyList)+ '}' IGNORE
+    {
+        return nodes;
     }
 
 // NOTE: PEG.js needed reversed match order

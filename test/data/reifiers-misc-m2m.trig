@@ -1,0 +1,118 @@
+PREFIX : <http://example.org/ns#>
+BASE <http://example.org/>
+
+GRAPH <CASE:BookCollaboration> {
+
+  <wolvesinthewalls> a :IllustratedBook ;
+    :author <neilgaiman> {| @ <#wtwcllb> |} ;
+    :illustrator <davemckean> {| @ <#wtwcllb> |} .
+
+  <#wtwcllb> a :Collaboration ;
+    :during 2003 ;
+    :inspiredBy <maddygaiman> .
+
+}
+
+GRAPH <CASE:MovieCollaboration> {
+  <mirrormask> a :Movie ;
+    :screenwriter <neilgaiman> {| @ <#mmfilming> |} ;
+    :director <davemckean> {| @ <#mmfilming> |} ;
+    :writtenBy <neilgaiman> {| @ <#mmstory> |},
+            <davemckean> {| @ <#mmstory> |} .
+
+  <#mmstory> a :StoryTelling ;
+    :during 2004 .
+
+  <#mmfilming> a :Filming ;
+    :during 2005 .
+
+}
+
+#<CASE:NAryRelation> :source <https://www.w3.org/TR/swbp-n-aryRelations/#useCase3> .
+GRAPH <CASE:NAryRelation> {
+
+  <John> :hasBought :Lenny_The_Lion {| @ <Purchase_1> |} .
+  <Lenny_The_Lion> :soldBy :books.example.com {| @ <Purchase_1> |} .
+
+  <Purchase_1> a :Purchase ;
+      :hasBuyer <John> ;
+      :hasObject <Lenny_The_Lion> ;
+      :hasPurpose <Birthday_Gift> ;
+      :hasAmount "$15" ;
+      :hasSeller <books.example.com> .
+
+}
+
+#<CASE:Assignment> :source <https://www.theguardian.com/film/2018/mar/08/hedy-lamarr-1940s-bombshell-helped-invent-wifi-missile> .
+GRAPH <CASE:Assignment> {
+
+    <HedyLamarr> a :Person ;
+      :workedFor <USNavy> {| @ <USNavyProject1940S1> |} ;
+      :aquiredSkill <FrequencyHopping> {| @ <USNavyProject1940S1> |} .
+
+    <USNavyProject1940S1> a :Project ;
+      :purpose <SecretCommunicationSystem> ;
+      :during "1940" .
+
+}
+
+GRAPH <CASE:CollaborativePersonBiography> {
+
+  <person/1> a :Person *{<#in587abb54>} ;
+    :birthDate "1901" *{
+          <#in587abb54>
+          [ a :DataIngest ;
+            :source <page/456> ;
+            :date "2023-09-19" ]
+        } ,
+      << "1902" >> *{[ a :DataProposal ;
+            :creator <user/72> ;
+            :date "2024-04-23" ]} .
+
+  <#in587abb54> a :DataIngest ;
+    :source <page/123> ;
+    :date "2017-01-14" .
+
+}
+
+GRAPH <CASE:Claims> {
+
+  <Q234185> :name "Alice" {| @ _:b1 |} ;
+    :birthDate "1852" {| @ _:b1 |} .
+
+  _:b1 a :Claim ;
+    :source <a-letter> {| @ <ark:/99166/w6ks75mt> |} ;
+    :attributedTo <charlesdodgson> {| @ <ark:/99166/w6ks75mt> |} .
+
+  <ark:/99166/w6ks75mt> a :SNAC ;
+    :generatedAt "2017-10-09" .
+
+}
+
+GRAPH <CASE:CommonEndeavorHyperEdge> {
+
+  <NeverwhereTheTVSeries> a :TVSeries ;
+    :commonEndeavor <NeverwhereTheBook> {| @ <Neverwhere> |} .
+
+  <NeverwhereTheBook> a :Book ;
+    :commonEndeavor <NeverwhereTheComicBook> {| @ <Neverwhere> |} .
+
+  <NeverwhereTheComicBook> a :ComicBook ;
+    :commonEndeavor <NeverwhereTheComicBook> {| @ <Neverwhere> |} .
+
+}
+
+<Neverwhere> a :Story .
+
+GRAPH <REFERENCE:LinkedWork> {
+
+  <NeverwhereTheTVSeries> a :TVSeries ;
+    :expressionOf <Neverwhere> .
+
+  <NeverwhereTheBook> a :Book ;
+    :expressionOf <Neverwhere> .
+
+  <NeverwhereTheComicBook> a :ComicBook ;
+    :expressionOf <Neverwhere> .
+
+}
