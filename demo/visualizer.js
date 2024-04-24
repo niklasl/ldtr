@@ -39,7 +39,7 @@ export function visualize(elem, result, params = {}) {
   }
 
   for (var node of nodes) {
-    showNode(out, node)
+    showNode(out, node, 'topblank')
   }
 
   elem.innerHTML = chunks.join("\n")
@@ -68,13 +68,18 @@ function showContext(out, context) {
 
 function showNode(out, node, classes = '') {
   var graph = node[GRAPH]
+
   var id = node[ID]
-  var tag = id != null? 'article' : 'div'
+
+  if (!id && graph /*&& parentGraph*/) id = false
+
+  var tag = id != null || classes === 'topblank' ? 'article' : 'div'
+
   if (graph) {
     classes += ' graph'
   }
 
-  var idattr = id != null? ' id="'+ id + (graph ? '@graph' : '') +'"' : ''
+  var idattr = id != null ? ' id="'+ id + (graph ? '@graph' : '') +'"' : ''
   out('<'+tag + idattr +' class="card '+ classes +'">')
 
   out('<header>')
@@ -94,10 +99,11 @@ function showNode(out, node, classes = '') {
   out('</header>')
   showContents(out, node)
   if (graph) {
-    if (Array.isArray(graph)) {
-      for (var it of graph) {
-        showNode(out, it)
-      }
+    if (!Array.isArray(graph)) {
+      graph = [graph]
+    }
+    for (var it of graph) {
+      showNode(out, it, 'topblank')
     }
   }
 
