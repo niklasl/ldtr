@@ -160,7 +160,14 @@ a.ref:hover, a.ref.selected {
 }
 
 
+.annotations {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 50%;
+}
+
 .annotation,
+.quoted,
 #view article.triple {
   background-color: #eaeaea;
   border: 1pt dashed #aaa;
@@ -177,6 +184,7 @@ a.ref:hover, a.ref.selected {
   min-width: 99%;
 }
 .annotation,
+.quoted,
 .triple {
   font-size: 0.9em;
 }
@@ -195,6 +203,10 @@ a.ref:hover, a.ref.selected {
   border-right: 0.9em solid var(--border);
   border-bottom: none;
   border-left: none;
+}
+
+.quoted {
+  padding: 0.4em;
 }
 
 article.card .annotation div.p {

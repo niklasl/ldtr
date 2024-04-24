@@ -16,7 +16,7 @@ import {
   VOCAB,
 } from '../lib/jsonld/keywords.js'
 
-import { ANNOTATION, ANNOTATED_TYPE_KEY } from '../lib/jsonld/star.js'
+import { ANNOTATION, ANNOTATED_TYPE_KEY, QUOTED } from '../lib/jsonld/star.js'
 
 export function visualize(elem, result, params = {}) {
   var chunks = []
@@ -134,18 +134,20 @@ function showContents(out, node, inArray) {
   }
 
   for (var key in node) {
-    if (key[0] === '@')
+    const isQuoted = key === QUOTED
+
+    if (key[0] === '@' && !isQuoted)
       continue
 
     var value = node[key]
 
     if (isLiteral(value)) {
-      out('<div class="p">')
+      out(isQuoted ? '<div class="quoted p">' : '<div class="p">')
       if (!inArray) showTerm(out, key)
       showLiteral(out, value)
       out('</div>')
     } else if (Array.isArray(value)) {
-      out('<div>')
+      out(isQuoted ? '<div class="quoted">' : '<div>')
       if (!inArray) showTerm(out, key)
       out('<ul>')
       for (var part of value) {
@@ -157,7 +159,7 @@ function showContents(out, node, inArray) {
       out('</div>')
     } else if (typeof value === 'object') {
       if (value[LIST]) {
-        out('<div>')
+        out(isQuoted ? '<div class="quoted">' : '<div>')
         showTerm(out, key)
         out('<ol>')
         for (var part of value[LIST]) {
@@ -169,12 +171,12 @@ function showContents(out, node, inArray) {
         showAnnotation(out, value)
         out('</div>')
       } else if (value[ID]) {
-        out('<div class="p">')
+        out(isQuoted ? '<div class="quoted p">' : '<div class="p">')
         if (!inArray) showTerm(out, key)
         showRef(out, value)
         out('</div>')
       } else {
-        out('<div>')
+        out(isQuoted ? '<div class="quoted">' : '<div>')
         if (!inArray) showTerm(out, key)
         showNode(out, value, 'embedded')
         out('</div>')
@@ -184,6 +186,7 @@ function showContents(out, node, inArray) {
 }
 
 function showTerm(out, key) {
+  if (key === QUOTED) return
   out('<b>'+ key +'</b>')
 }
 
@@ -243,11 +246,29 @@ function showReverses(out, revs) {
 }
 
 function showAnnotation (out, node) {
-  let annot = node[ANNOTATION]
-  if (annot) {
-    out('<div class="annotation">')
-    showContents(out, annot)
-    out('</div>')
+  let annots = node[ANNOTATION]
+  if (annots) {
+    if (!Array.isArray(annots)) {
+      annots = [annots]
+    }
+    if (annots.length > 1) {
+      out('<div class="annotations">')
+    }
+    for (const annot of annots) {
+      out('<div class="annotation">')
+      const id = annot[ID]
+      if (id && typeof id !== 'object') {
+        out('<a class="ref" href="'+ id +'">'+ id +'</a>')
+      }
+      if (TYPE in annot) {
+        showType(out, annot[TYPE])
+      }
+      showContents(out, annot)
+      out('</div>')
+    }
+    if (annots.length > 1) {
+      out('</div>')
+    }
   }
 }
 
