@@ -3,22 +3,22 @@ BASE <http://example.org/>
 
 GRAPH <CASE:BookCollaboration> {
 
-  <wolvesinthewalls> a :IllustratedBook ;
-    :author <neilgaiman> {| @ <#wtwcllb> |} ;
-    :illustrator <davemckean> {| @ <#wtwcllb> |} .
+  <WolvesInTheWalls> a :IllustratedBook ;
+    :author <NeilGaiman> {| @ <#wtwcllb> |} ;
+    :illustrator <DaveMcKean> {| @ <#wtwcllb> |} .
 
   <#wtwcllb> a :Collaboration ;
     :during 2003 ;
-    :inspiredBy <maddygaiman> .
+    :inspiredBy <MaddyGaiman> .
 
 }
 
 GRAPH <CASE:MovieCollaboration> {
-  <mirrormask> a :Movie ;
-    :screenwriter <neilgaiman> {| @ <#mmfilming> |} ;
-    :director <davemckean> {| @ <#mmfilming> |} ;
-    :writtenBy <neilgaiman> {| @ <#mmstory> |},
-            <davemckean> {| @ <#mmstory> |} .
+  <MirrorMask> a :Movie ;
+    :screenwriter <NeilGaiman> {| @ <#mmfilming> |} ;
+    :director <DaveMcKean> {| @ <#mmfilming> |} ;
+    :writtenBy <NeilGaiman> {| @ <#mmstory> |},
+            <DaveMcKean> {| @ <#mmstory> |} .
 
   <#mmstory> a :StoryTelling ;
     :during 2004 .
@@ -31,8 +31,8 @@ GRAPH <CASE:MovieCollaboration> {
 #<CASE:NAryRelation> :source <https://www.w3.org/TR/swbp-n-aryRelations/#useCase3> .
 GRAPH <CASE:NAryRelation> {
 
-  <John> :hasBought :Lenny_The_Lion {| @ <Purchase_1> |} .
-  <Lenny_The_Lion> :soldBy :books.example.com {| @ <Purchase_1> |} .
+  <John> :hasBought <Lenny_The_Lion> {| @ <Purchase_1> |} .
+  <Lenny_The_Lion> :soldBy <books.example.com> {| @ <Purchase_1> |} .
 
   <Purchase_1> a :Purchase ;
       :hasBuyer <John> ;
@@ -98,7 +98,7 @@ GRAPH <CASE:CommonEndeavorHyperEdge> {
     :commonEndeavor <NeverwhereTheComicBook> {| @ <Neverwhere> |} .
 
   <NeverwhereTheComicBook> a :ComicBook ;
-    :commonEndeavor <NeverwhereTheComicBook> {| @ <Neverwhere> |} .
+    :commonEndeavor <NeverwhereTheTVSeries> {| @ <Neverwhere> |} .
 
 }
 
