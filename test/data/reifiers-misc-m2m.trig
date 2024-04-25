@@ -5,11 +5,21 @@ GRAPH <CASE:BookCollaboration> {
 
   <WolvesInTheWalls> a :IllustratedBook ;
     :author <NeilGaiman> {| @ <#wtwcllb> |} ;
-    :illustrator <DaveMcKean> {| @ <#wtwcllb> |} .
+    :illustrator <DaveMcKean> {| @ <#wtwcllb> |} ;
+    :datePublished "2003" {| @ <#uspbl> |} ,
+      "2003" {| @ <#ukpbl> |} ;
+    :publisher <HarperCollins> {| @ <#uspbl> |} ,
+      <Bloomsbury> {| @ <#ukpbl> |} .
 
   <#wtwcllb> a :Collaboration ;
-    :during 2003 ;
+    :during "2003" ;
     :inspiredBy <MaddyGaiman> .
+
+  <#uspbl> a :PublicationEvent ;
+    :location <US> .
+
+  <#ukpbl> a :PublicationEvent ;
+    :location <UK> .
 
 }
 
