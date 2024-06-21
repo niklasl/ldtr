@@ -416,7 +416,7 @@ collection = IGNORE '(' IGNORE collection:object* IGNORE ')' IGNORE
     }
 
 quotedTriple = IGNORE '<<' IGNORE s:qtSubject IGNORE p:verb IGNORE o:qtObject IGNORE '>>' IGNORE {
-    let obj = reducePairs(s, [toPair({verb: p}, o)])
+    let obj = reducePairs(s, [toPair(p, o)])
     return { '@id': obj }
 }
 
