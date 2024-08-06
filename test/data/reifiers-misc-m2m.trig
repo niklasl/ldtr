@@ -4,12 +4,12 @@ BASE <http://example.org/>
 GRAPH <CASE:BookCollaboration> {
 
   <WolvesInTheWalls> a :IllustratedBook ;
-    :author <NeilGaiman> {| @ <#wtwcllb> |} ;
-    :illustrator <DaveMcKean> {| @ <#wtwcllb> |} ;
-    :datePublished "2003" {| @ <#uspbl> |} ,
-      "2003" {| @ <#ukpbl> |} ;
-    :publisher <HarperCollins> {| @ <#uspbl> |} ,
-      <Bloomsbury> {| @ <#ukpbl> |} .
+    :author <NeilGaiman> ~ <#wtwcllb> ;
+    :illustrator <DaveMcKean> ~ <#wtwcllb> ;
+    :datePublished "2003" ~ <#uspbl> ,
+      "2003" ~ <#ukpbl> ;
+    :publisher <HarperCollins> ~ <#uspbl> ,
+      <Bloomsbury> ~ <#ukpbl> .
 
   <#wtwcllb> a :Collaboration ;
     :during "2003" ;
@@ -25,10 +25,10 @@ GRAPH <CASE:BookCollaboration> {
 
 GRAPH <CASE:MovieCollaboration> {
   <MirrorMask> a :Movie ;
-    :screenwriter <NeilGaiman> {| @ <#mmfilming> |} ;
-    :director <DaveMcKean> {| @ <#mmfilming> |} ;
-    :writtenBy <NeilGaiman> {| @ <#mmstory> |},
-            <DaveMcKean> {| @ <#mmstory> |} .
+    :screenwriter <NeilGaiman> ~ <#mmfilming> ;
+    :director <DaveMcKean> ~ <#mmfilming> ;
+    :writtenBy <NeilGaiman> ~ <#mmstory>,
+            <DaveMcKean> ~ <#mmstory> .
 
   <#mmstory> a :StoryTelling ;
     :during 2004 .
@@ -41,8 +41,8 @@ GRAPH <CASE:MovieCollaboration> {
 #<CASE:NAryRelation> :source <https://www.w3.org/TR/swbp-n-aryRelations/#useCase3> .
 GRAPH <CASE:NAryRelation> {
 
-  <John> :hasBought <Lenny_The_Lion> {| @ <Purchase_1> |} .
-  <Lenny_The_Lion> :soldBy <books.example.com> {| @ <Purchase_1> |} .
+  <John> :hasBought <Lenny_The_Lion> ~ <Purchase_1> .
+  <Lenny_The_Lion> :soldBy <books.example.com> ~ <Purchase_1> .
 
   <Purchase_1> a :Purchase ;
       :hasBuyer <John> ;
@@ -57,8 +57,8 @@ GRAPH <CASE:NAryRelation> {
 GRAPH <CASE:Assignment> {
 
     <HedyLamarr> a :Person ;
-      :workedFor <USNavy> {| @ <USNavyProject1940S1> |} ;
-      :aquiredSkill <FrequencyHopping> {| @ <USNavyProject1940S1> |} .
+      :workedFor <USNavy> ~ <USNavyProject1940S1> ;
+      :aquiredSkill <FrequencyHopping> ~ <USNavyProject1940S1> .
 
     <USNavyProject1940S1> a :Project ;
       :purpose <SecretCommunicationSystem> ;
@@ -68,31 +68,30 @@ GRAPH <CASE:Assignment> {
 
 GRAPH <CASE:CollaborativePersonBiography> {
 
-  <person/1> a :Person *{<#in587abb54>} ;
-    :birthDate "1901" *{
-          <#in587abb54>
-          [ a :DataIngest ;
-            :source <page/456> ;
-            :date "2023-09-19" ]
-        } ,
-      << "1902" >> *{[ a :DataProposal ;
-            :creator <user/72> ;
-            :date "2024-04-23" ]} .
+  <person/1> a :Person ~ <#in587abb54> ;
+    :birthDate "1901" {| a :DataIngest ;
+          :source <page/456> ;
+          :date "2023-09-19" |}
+        ~ <#in587abb54> .
 
   <#in587abb54> a :DataIngest ;
     :source <page/123> ;
     :date "2017-01-14" .
 
+  << <person/1> :birthDate "1902" >> a :DataProposal ;
+      :creator <user/72> ;
+      :date "2024-04-23" .
+
 }
 
 GRAPH <CASE:Claims> {
 
-  <Q234185> :name "Alice" {| @ _:b1 |} ;
-    :birthDate "1852" {| @ _:b1 |} .
+  <Q234185> :name "Alice" ~ _:b1 ;
+    :birthDate "1852" ~ _:b1 .
 
   _:b1 a :Claim ;
-    :source <a-letter> {| @ <ark:/99166/w6ks75mt> |} ;
-    :attributedTo <charlesdodgson> {| @ <ark:/99166/w6ks75mt> |} .
+    :source <a-letter> ~ <ark:/99166/w6ks75mt> ;
+    :attributedTo <charlesdodgson> ~ <ark:/99166/w6ks75mt> .
 
   <ark:/99166/w6ks75mt> a :SNAC ;
     :generatedAt "2017-10-09" .
@@ -102,13 +101,13 @@ GRAPH <CASE:Claims> {
 GRAPH <CASE:CommonEndeavorHyperEdge> {
 
   <NeverwhereTheTVSeries> a :TVSeries ;
-    :commonEndeavor <NeverwhereTheBook> {| @ <Neverwhere> |} .
+    :commonEndeavor <NeverwhereTheBook> ~ <Neverwhere> .
 
   <NeverwhereTheBook> a :Book ;
-    :commonEndeavor <NeverwhereTheComicBook> {| @ <Neverwhere> |} .
+    :commonEndeavor <NeverwhereTheComicBook> ~ <Neverwhere> .
 
   <NeverwhereTheComicBook> a :ComicBook ;
-    :commonEndeavor <NeverwhereTheTVSeries> {| @ <Neverwhere> |} .
+    :commonEndeavor <NeverwhereTheTVSeries> ~ <Neverwhere> .
 
 }
 

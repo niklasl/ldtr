@@ -6,6 +6,7 @@
 
     const PNAME_TAG = "_:neverspace.net,2016-01-10:ldtr:pname";
 
+    const ID = '@id';
     const TYPE = '@type';
     const ANNOTATION = '@annotation';
     const QUOTED = '@quoted';
@@ -190,6 +191,17 @@
         if (annotation == null) {
             return object
         }
+
+        if (Array.isArray(annotation)) {
+            if (annotation.length === 0) {
+                return object
+            }
+
+            annotation = reduceAnnotPairs(annotation)
+
+            if (annotation.length === 1) annotation = annotation[0]
+        }
+
         /*
         if (ANNOTATED_OBJECTS_KEY) {
             annotation[ANNOTATED_OBJECTS_KEY] = object
@@ -202,6 +214,32 @@
             object[ANNOTATION] = annotation
         }
         return object
+    }
+
+    function reduceAnnotPairs (annotations) {
+        const reducedAnnots = []
+        let idNode = null
+        for (let annot of annotations) {
+            if (ID in annot) {
+                if (idNode !== null) {
+                    reducedAnnots.push(idNode)
+                }
+                idNode = annot
+                continue
+            }
+
+            if (idNode !== null) {
+                annot = Object.assign(idNode, annot)
+                idNode = null
+            }
+
+            reducedAnnots.push(annot)
+        }
+        if (idNode !== null) {
+            reducedAnnots.push(idNode)
+            idNode = null
+        }
+        return reducedAnnots
     }
 
     var echars = {
@@ -287,8 +325,8 @@ triplesOrGraph =
         } else {
             return reducePairs(subject, labelled);
         }
-    } / quoted:quotedTriple IGNORE pos:predicateObjectList IGNORE '.' {
-        return reducePairs(quoted, pos)
+    } / quoted:reifiedTriple IGNORE pos:predicateObjectList? IGNORE '.' {
+        return reducePairs(quoted, pos || []);
     }
 
 triples2 =
@@ -345,33 +383,48 @@ sparqlBase =
         return base(iriref);
     }
 
-triples =
-    subject:subject pos:predicateObjectList
+triples = tripleDecl / realTriples
+
+tripleDecl = quoted:reifiedTriple pos:predicateObjectList? {
+    return reducePairs(quoted, pos || []);
+}
+
+realTriples = subject:subject pos:predicateObjectList
     {
         return reducePairs(subject, pos);
     }
     / blankNodePropertyList predicateObjectList?
 
 predicateObjectList =
-    verb:verb objectList:objectList rest:(';' vol:(verb objectList)? { return vol; } )* IGNORE
+    pair:predicateObjectForms rest:(';' rpair:predicateObjectForms? { return rpair; } )* IGNORE
     {
-        var po = toPair(verb, objectList);
-        var pairs = [po];
-        for (var pair of rest) {
-            if (pair === null) // last ';', so we could also break
+        var pairs = [pair];
+        for (var rpair of rest) {
+            if (rpair === null) // last ';', effectively a break
                 continue
-            let [rTerm, rList] = pair;
-            po = toPair(rTerm, rList);
-            pairs.push(po);
+            pairs.push(rpair);
         }
         return pairs;
     }
 
+predicateObjectForms = verbObjectList / quotedPredicateObject
+
+verbObjectList = verb:verb objectList:objectList
+    {
+        return toPair(verb, objectList);
+    }
+
+quotedPredicateObject = IGNORE '<<' IGNORE v:verb IGNORE o:object IGNORE '>>' IGNORE ann:annotation
+    {
+        var annObject = packAnnotation(o, ann);
+        return {[QUOTED]: toPair(v, annObject)};
+    }
+
 objectList =
     //first:object remainder:(IGNORE ',' IGNORE  object:object { return object; } )*
-    first:(qObject:qObject IGNORE annotation:annotation? { return packAnnotation(qObject, annotation) })
+    first:(obj:object IGNORE annotation:annotation* { return packAnnotation(obj, annotation) })
     remainder:(IGNORE ',' IGNORE
-               annotated:(qObject:qObject IGNORE annotation:annotation? { return packAnnotation(qObject, annotation) }) { return annotated })*
+               annotated:(obj:object IGNORE annotation:annotation* { return packAnnotation(obj, annotation) }) { return annotated })*
     {
         if (remainder.length > 0) {
             var objects = [first];
@@ -390,11 +443,9 @@ verb =
         return typeof verb === 'object' ? verb['@id'] || '' : verb;
     }
 
-subject = iri / blank / quotedTriple
+subject = iri / blank / reifiedTriple
 predicate = iri
-qObject = object:(qObject2 / object)
-qObject2 = '<<' IGNORE object:object IGNORE '>>' { return {'@quoted': object} }
-object = iri / blank / blankNodePropertyList / literal / quotedTriple / wrappedGraph
+object = iri / blank / blankNodePropertyList / literal / tripleTerm / reifiedTriple / wrappedGraph
 
 literal =
     IGNORE literal:(RDFLiteral / NumericLiteral / BooleanLiteral) IGNORE
@@ -415,26 +466,30 @@ collection = IGNORE '(' IGNORE collection:object* IGNORE ')' IGNORE
         return {'@list': collection};
     }
 
-quotedTriple = IGNORE '<<' IGNORE s:qtSubject IGNORE p:verb IGNORE o:qtObject IGNORE '>>' IGNORE {
-    let obj = reducePairs(s, [toPair(p, o)])
-    return { '@id': obj }
+reifiedTriple = IGNORE '<<' IGNORE s:subject IGNORE p:verb IGNORE o:object IGNORE rei:(x:reifier IGNORE { return x })? '>>' IGNORE {
+    const triple = reducePairs(s, [toPair(p, o)])
+    const obj = rei ? rei : {}
+    obj['@triple'] = triple
+    return obj
 }
 
-qtSubject = iri / BlankNode / quotedTriple
-qtObject = iri / BlankNode / literal / quotedTriple
+tripleTerm = IGNORE '<<(' IGNORE s:ttSubject IGNORE p:predicate IGNORE o:ttObject IGNORE ')>>' IGNORE {
+    const triple = reducePairs(s, [toPair(p[ID], o)])
+    return { '@type': '@triple', '@value': triple }
+}
 
-annotation = starAnnotation / nodeAnnotation
+ttSubject = iri / BlankNode
+ttObject = iri / BlankNode / literal / tripleTerm
+
+reifier =
+    '~' IGNORE id:(iri / BlankNode) { return id }
+
+annotation = starAnnotation / reifier
 
 starAnnotation =
-    IGNORE '{|' idOrPos:((IGNORE '@' IGNORE id:labelOrSubject { return id }) / pos:predicateObjectList { return reducePairs({}, pos) }) '|}' IGNORE
+    IGNORE '{|' pos:predicateObjectList '|}' IGNORE
     {
-        return idOrPos;
-    }
-
-nodeAnnotation =
-    IGNORE '*' IGNORE '{' nodes:(iri / blank / blankNodePropertyList)+ '}' IGNORE
-    {
-        return nodes;
+        return reducePairs({}, pos);
     }
 
 // NOTE: PEG.js needed reversed match order

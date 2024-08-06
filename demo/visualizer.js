@@ -16,7 +16,7 @@ import {
   VOCAB,
 } from '../lib/jsonld/keywords.js'
 
-import { ANNOTATION, ANNOTATED_TYPE_KEY, QUOTED } from '../lib/jsonld/star.js'
+import { ANNOTATION, ANNOTATED_TYPE_KEY, TRIPLE, QUOTED } from '../lib/jsonld/star.js'
 
 export function visualize(elem, result, params = {}) {
   var chunks = []
@@ -87,17 +87,24 @@ function showNode(out, node, classes = '') {
     out('<span class="type"><i class="kw">graph</i></span>')
   }
   if (id != null) {
+    /*
     if (typeof id === 'object') {
       showQuotedTriple(out, id)
     } else {
       out('<a class="id" href="'+ id +'">'+ (id || '&nbsp;') +'</a>')
     }
+    */
+  out('<a class="id" href="'+ id +'">'+ (id || '&nbsp;') +'</a>')
   }
+
   if (TYPE in node) {
     showType(out, node[TYPE])
   }
+
   out('</header>')
+
   showContents(out, node)
+
   if (graph) {
     if (!Array.isArray(graph)) {
       graph = [graph]
@@ -134,14 +141,23 @@ function showContents(out, node, inArray) {
   }
 
   for (var key in node) {
-    const isQuoted = key === QUOTED
+    var value = node[key]
 
+    if (key == TRIPLE) {
+      showQuotedTriple(out, value)
+      continue
+    }
+
+    const isQuoted = key === QUOTED
     if (key[0] === '@' && !isQuoted)
       continue
 
-    var value = node[key]
-
-    if (isLiteral(value)) {
+    if (value[TYPE] === TRIPLE) {
+        out('<div class="p triple">')
+        if (!inArray) showTerm(out, key)
+        showQuotedTriple(out, value[VALUE])
+        out('</div>')
+    } else if (isLiteral(value)) {
       out(isQuoted ? '<div class="quoted p">' : '<div class="p">')
       if (!inArray) showTerm(out, key)
       showLiteral(out, value)
@@ -192,12 +208,14 @@ function showTerm(out, key) {
 
 function showRef(out, node) {
   var id = node[ID]
+  /*
   if (typeof id === 'object') {
     out('<div class="ref">')
     showQuotedTriple(out, id)
     out('</div>')
     return
   }
+  */
 
   out('<a class="ref" href="'+ id +'">'+ id +'</a>')
   showAnnotation(out, node)
@@ -224,6 +242,9 @@ function showLiteral(out, value) {
     note += ' <span class="lang">' + lang +'</span>'
   if (dt)
     note += ' <span class="datatype">' + dt +'</span>'
+  if (typeof literal === 'string') {
+    literal = literal.replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+  }
   out('<span>'+ literal + note + '</span>')
   showAnnotation(out, value)
 }

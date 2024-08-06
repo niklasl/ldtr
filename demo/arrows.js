@@ -33,6 +33,10 @@ export function renderArrows(container) {
 
     let card = link.closest('[id].card')
 
+    if (card == null) {
+      return
+    }
+
     let arrow = document.createElementNS(SVGNS, 'path')
     arrow.classList.add('arrow')
 
