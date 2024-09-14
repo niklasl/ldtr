@@ -9,6 +9,8 @@
     const ID = '@id';
     const TYPE = '@type';
     const ANNOTATION = '@annotation';
+    const REIFIES = '@reifies';
+    const TRIPLE = '@triple';
     const QUOTED = '@quoted';
     const ANNOTATED_TYPE_KEY = '@set'; // TODO: '@id';
     const RDF_TYPE = {"rdf:type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"};
@@ -21,8 +23,6 @@
         }
     };
     //const ANNOTATED_OBJECTS_KEY = '@object';
-
-    const TRIPLE_KEY = '@id' // TODO: '@triple';
 
     function assign(target, source) {
         for (var key in source) {
@@ -469,13 +469,13 @@ collection = IGNORE '(' IGNORE collection:object* IGNORE ')' IGNORE
 reifiedTriple = IGNORE '<<' IGNORE s:subject IGNORE p:verb IGNORE o:object IGNORE rei:(x:reifier IGNORE { return x })? '>>' IGNORE {
     const triple = reducePairs(s, [toPair(p, o)])
     const obj = rei ? rei : {}
-    obj['@triple'] = triple
+    obj[REIFIES] = triple
     return obj
 }
 
 tripleTerm = IGNORE '<<(' IGNORE s:ttSubject IGNORE p:predicate IGNORE o:ttObject IGNORE ')>>' IGNORE {
     const triple = reducePairs(s, [toPair(p[ID], o)])
-    return { '@type': '@triple', '@value': triple }
+    return { [TRIPLE]: triple }
 }
 
 ttSubject = iri / BlankNode

@@ -16,7 +16,11 @@ import {
   VOCAB,
 } from '../lib/jsonld/keywords.js'
 
-import { ANNOTATION, ANNOTATED_TYPE_KEY, TRIPLE, QUOTED } from '../lib/jsonld/star.js'
+import { ANNOTATION, ANNOTATED_TYPE_KEY, REIFIES, TRIPLE, QUOTED } from '../lib/jsonld/star.js'
+
+function asArray(o) {
+  return Array.isArray(o) ? o : o != null ? [o] : o
+}
 
 export function visualize(elem, result, params = {}) {
   var chunks = []
@@ -30,7 +34,8 @@ export function visualize(elem, result, params = {}) {
   if (!Array.isArray(result)) {
     nodes = result[GRAPH] || result
   }
-  if (!Array.isArray(nodes)) nodes = [nodes]
+
+  nodes = asArray(nodes)
 
   if (typeof result.byId === 'object' &&
     typeof context.byId === 'object' &&
@@ -106,9 +111,7 @@ function showNode(out, node, classes = '') {
   showContents(out, node)
 
   if (graph) {
-    if (!Array.isArray(graph)) {
-      graph = [graph]
-    }
+    graph = asArray(graph)
     for (var it of graph) {
       showNode(out, it, 'topblank')
     }
@@ -126,7 +129,7 @@ function showNode(out, node, classes = '') {
 
 function showType(out, types) {
   out('<span class="type">')
-  if (!Array.isArray(types)) types = [types]
+  types = asArray(types)
   for (let type of types) {
     let v = typeof type === 'object' ? type[ANNOTATED_TYPE_KEY] : type
     out('<b>'+ v +'</b>')
@@ -152,10 +155,10 @@ function showContents(out, node, inArray) {
     if (key[0] === '@' && !isQuoted)
       continue
 
-    if (value[TYPE] === TRIPLE) {
+    if (typeof value === 'object' && TRIPLE in value) {
         out('<div class="p triple">')
         if (!inArray) showTerm(out, key)
-        showQuotedTriple(out, value[VALUE])
+        showQuotedTriple(out, value[TRIPLE])
         out('</div>')
     } else if (isLiteral(value)) {
       out(isQuoted ? '<div class="quoted p">' : '<div class="p">')
@@ -198,6 +201,13 @@ function showContents(out, node, inArray) {
         out('</div>')
       }
     }
+  }
+  if (REIFIES in node) {
+    out('<div class="quoted">')
+    for (const sub of asArray(node[REIFIES])) {
+      showNode(out, sub, 'quoted')
+    }
+    out('</div>')
   }
 }
 
@@ -269,9 +279,7 @@ function showReverses(out, revs) {
 function showAnnotation (out, node) {
   let annots = node[ANNOTATION]
   if (annots) {
-    if (!Array.isArray(annots)) {
-      annots = [annots]
-    }
+    annots = asArray(annots)
     if (annots.length > 1) {
       out('<div class="annotations">')
     }
