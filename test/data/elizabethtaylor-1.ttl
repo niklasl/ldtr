@@ -1,0 +1,101 @@
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <https://schema.org/>
+prefix ex: <http://example.org/ns/>
+prefix wd: <http://www.wikidata.org/entity/>
+base <http://example.org/entity/>
+
+<Elizabeth_Taylor> a :Person ;
+  owl:sameAs <Q34851> ;
+  :name "Elizabeth Taylor"@en ;
+  :nationality <UK> {| :startDate "1932-02-27" |} ,
+    <US> {| :startDate "1932-02-27" ;
+          :endDate "1966" |}
+       {| :startDate "1977" ;
+          :endDate "2011-03-23" |} ;
+  ex:notableRole <Martha> {| :subjectOf <Iconic_Roles_Article_220410> |} ,
+    <Velvet_Brown> {| :subjectOf <Iconic_Roles_Article_220410> |} ,
+    <Desiree_Armfeldt> {| :subjectOf <Iconic_Roles_Article_220410> |} ;
+  :award <Commandeur_des_Arts_et_des_Lettres> {| :subjectOf <French_Wikipedia> |} ,
+    <Dame_Commander_of_the_Order_of_the_British_Empire> {| ex:onDate "1999-12-31" ;
+          :subjectOf <The_London_Gazette_55710> {| :pagination "34" |} |} ,
+    <Academy_Award_for_Best_Actress> {| ex:forWork <Butterfield_8> ;
+          :superEvent <33rd_Academy_Awards> ;
+          ex:onDate "1961-04-17" ;
+          :subjectOf <https://www.oscars.org/oscars/ceremonies/1961> |}
+       {| ex:forWork <Whos_Afraid_of_Virginia_Woolf> ;
+          :superEvent <39th_Academy_Awards> ;
+          ex:onDate "1967-04-10" ;
+          :subjectOf <https://www.oscars.org/oscars/ceremonies/1967> |} ;
+  :spouse <Michael_Wilding> {| :startDate "1952-02-21" ;
+          :endDate "1957-01-30" ;
+          :location <Caxton_Hall> ;
+          ex:endCause <divorce> ;
+          :subjectOf <Peerage33432i334317_200807> |} ,
+    <Richard_Burton> {| :startDate "1964-03-15" ;
+          :endDate "1974-06-26" ;
+          :location <Ritz-Carlton_Montreal> ;
+          ex:endCause <divorce> ;
+          :subjectOf <Peerage33432i334317_200807> |}
+       {| :startDate "1975-10-10" ;
+          :endDate "1976-07-29" ;
+          :location <Chobe_National_Park> ;
+          ex:endCause <divorce> ;
+          :subjectOf <Peerage33432i334317_200807> |} ,
+    <Larry_Fortensky> {| :startDate "1991-10-06" ;
+          :endDate "1996-10-31" ;
+          :location <Neverland_Ranch> ;
+          ex:endCause <divorce> ;
+          :subjectOf <Peerage33432i334317_200807> |} .
+
+<Iconic_Roles_Article_220410> a :Article ;
+  :exampleOfWork <https://www.hollywoodreporter.com/news/general-news/elizabeth-taylors-10-iconic-roles-170483/> ;
+  ex:retrieved "2022-04-10" .
+
+<Peerage33432i334317_200807> a :Article ;
+  :exampleOfWork <https://www.thepeerage.com/p33432.htm#i334317> ;
+  ex:retrieved "2020-08-07" .
+
+<French_Wikipedia> a :WebSite ; owl:sameAs wd:Q8447 .
+
+<The_London_Gazette_55710> a :PublicationIssue ; owl:sameAs wd:Q109212757 .
+
+<UK> a :Country ; owl:sameAs wd:Q145 .
+
+<US> a :Country ; owl:sameAs wd:Q30 .
+
+<Martha> a ex:FilmCharacter ; owl:sameAs wd:Q60607467 ;
+  ex:presentInWork <Whos_Afraid_of_Virginia_Woolf> .
+
+<Velvet_Brown> a ex:FilmCharacter ; owl:sameAs wd:Q109533894 .
+
+<Desiree_Armfeldt> a ex:FilmCharacter ; owl:sameAs wd:Q63882371 .
+
+<Butterfield_8> a :Movie ; owl:sameAs wd:Q652069 .
+
+<Whos_Afraid_of_Virginia_Woolf> a :Movie ; owl:sameAs wd:Q325643 .
+
+<Commandeur_des_Arts_et_des_Lettres> a ex:Award ; owl:sameAs wd:Q13452531 .
+
+<Dame_Commander_of_the_Order_of_the_British_Empire> a ex:Award ; owl:sameAs wd:Q12201434 .
+
+<Academy_Award_for_Best_Actress> a ex:Award ; owl:sameAs wd:Q103618 .
+
+<33rd_Academy_Awards> a :SocialEvent ; owl:sameAs wd:Q917071 .
+
+<39th_Academy_Awards> a :SocialEvent ;  owl:sameAs wd:Q167214 .
+
+<Michael_Wilding> a :Person ; owl:sameAs wd:Q1385992 .
+
+<Richard_Burton> a :Person ; owl:sameAs wd:Q151973 .
+
+<Larry_Fortensky> a :Person ; owl:sameAs wd:Q1806057 .
+
+<Caxton_Hall> a :Place ; owl:sameAs wd:Q5055269 .
+
+<Ritz-Carlton_Montreal> a :Place ; owl:sameAs wd:Q3433362 .
+
+<Chobe_National_Park> a :Place ; owl:sameAs wd:Q859389 .
+
+<Neverland_Ranch> a :Place ; owl:sameAs wd:Q953021 .
+
+<divorce> a :Enumeration ; owl:sameAs wd:Q93190 .

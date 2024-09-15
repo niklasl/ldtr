@@ -1,0 +1,50 @@
+prefix : <http://example.org/ns#>
+base <http://example.org/Anne_Bonny>
+
+<Anne_Bonny> a :Person ;
+  :label "Anne Bonny" {| a :Label ; :basedOn <#n1> , <#n2> |} ;
+  :givenName "Anne"@en ~ <#n1> {| a :Baptism ; :basedOn <#birth> |} ;
+  :familyName "Bonny"@en ~ <#n2> {| a :Naming ; :basedOn <#marriage1> |} ;
+  :parent <William_Cormac> ~ <#birth> ~ <#ref001> ,
+    <Mary_Brennan> ~ <#birth> ~ <#ref001> ;
+  :birthPlace <Kinsale,Cork_County,Ireland> ~ <#birth> ~ <#ref001> ;
+  :birthDate "1697"^^:EDTF ~ <#birth> ;
+  :spouse <James_Bonny> ~ <#marriage1> ~ <#ref001> ;
+  :partner <John_Rackham> ~ <#ref001> ~ <#piracy> ;
+  :occupation <Pirate> ~ <#ref001>  ~ <#piracy> ;
+  :deathDate "?1733-12-29"^^:EDTF ~ <#death> ~ <#ref002> ;
+  :placeOfBurial <Spanish_Town,Jamaica> ~ <#burial> ~ <#ref002> .
+
+<#birth> a :Birth .
+
+<#marriage1> a :Marriage ;
+  :startDate "1716"^^:EDTF ~ <#ref001> .
+
+<#piracy> a :Circumstance ;
+  :startDate "1720"^^:EDTF ~ <#ref001> .
+
+<#death> a :Death .
+
+<#burial> a :Burial .
+
+<#ref001> a :Reference ;
+  :source <http://www.encyclopedia.com/doc/1G2-3446400036.html> ~ <#ref003> ;
+  :date "2024-08-14T12:48:07Z"^^:DateTime .
+
+<< <Anne_Bonny> :deathDate "1782-04-25"^^:EDTF ~ <#ref001> >> .
+
+<#ref002> a :Reference ;
+  :source <SaintCatherinesParishBurialRecord> ~ <#ref003> ;
+  :date "2024-08-14T13:13:31Z"^^:DateTime .
+
+<#ref003> a :Reference ;
+    :source <https://en.wikipedia.org/wiki/Anne_Bonny> ;
+    :date "2024-08-14T10:05:22Z"^^:DateTime .
+
+<#ref004> a :Reference ;
+    :status :Disproved ~ <#ref003> ;
+    :source <ThePirateTrialOfAnneBonnyAndMaryRead> ~ <#ref003> ;
+    :date "2024-08-14T12:59:06Z"^^:DateTime .
+
+<< <Anne_Bonny> :deathDate "1782"^^:EDTF ~ <#ref004> >> .
+<< <Anne_Bonny> :deathPlace <Cork,Cork_County,Ireland> ~ <#ref004> >> .
