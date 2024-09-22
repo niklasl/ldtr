@@ -18,6 +18,10 @@ export function renderArrows(container) {
             refX="0.1" refY="4">
       <path d="M0,0 V8 L4,4 Z" />
     </marker>
+    <marker id="arrowhead-rei" orient="auto" markerWidth="4" markerHeight="8"
+            refX="0.1" refY="2">
+      <path d="M0,0 V4 L2,2 Z" />
+    </marker>
   </defs>
   `
   svg.style.height = 'auto'
@@ -39,6 +43,10 @@ export function renderArrows(container) {
 
     let arrow = document.createElementNS(SVGNS, 'path')
     arrow.classList.add('arrow')
+
+    if (link.closest('.annotation') != null) {
+      arrow.classList.add('rei')
+    }
 
     let arrowLabel
     let label = link.closest('article > p, div > p, div').querySelector('b')

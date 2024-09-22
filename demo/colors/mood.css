@@ -30,4 +30,7 @@ body {
   --arrowlight: rgba(34, 34, 34, 0.8);
   --arrowback: #764;
   --arrowtext: #676f6f;
+
+  --rei: rgb(103, 111, 111, 0.2);
+  --reiback: #467;
 }

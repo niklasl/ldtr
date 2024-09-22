@@ -18,6 +18,14 @@ path.arrow {
   fill: rgba(127, 127, 127, 0.2);
 }
 
+path.arrow.rel {
+  stroke: rgb(127, 127, 127, 0.6);
+  marker-end: url(#arrowhead-rel);
+}
+#arrowhead-rel {
+  fill: rgb(127, 127, 127, 0.6);
+}
+
 path.arrow.rev {
   stroke: #888;
   marker-end: url(#arrowhead-rev);
@@ -26,12 +34,17 @@ path.arrow.rev {
   fill: #888;
 }
 
-path.arrow.rel {
-  stroke: rgb(127, 127, 127, 0.6);
-  marker-end: url(#arrowhead-rel);
+path.arrow.rel.rei,
+path.arrow.rev.rei {
+  stroke: var(--rei);
+  marker-end: url(#arrowhead);
 }
-#arrowhead-rel {
-  fill: rgb(127, 127, 127, 0.6);
+path.arrow.rev.rei {
+  stroke: var(--reiback);
+  marker-end: url(#arrowhead-rei);
+}
+#arrowhead-rei {
+  fill: var(--reiback);
 }
 
 span.arrow {

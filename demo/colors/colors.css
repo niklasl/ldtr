@@ -85,7 +85,7 @@ span.arrow:hover {
   background-color: var(--arrowlight);
 }
 span.arrow > a.id { color: var(--arrow); }
-path.arrow.rev { stroke: var(--arrowback); }
-#arrowhead-rev { fill: var(--arrowback); }
 path.arrow.rel { stroke: var(--arrow); }
 #arrowhead-rel { fill: var(--arrow); }
+path.arrow.rev { stroke: var(--arrowback); }
+#arrowhead-rev { fill: var(--arrowback); }

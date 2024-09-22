@@ -30,6 +30,9 @@ body {
   --arrowlight: #fff;
   --arrowback: #601;
   --arrowtext: #676f6f;
+
+  --rei: rgb(103, 111, 111, 0.2);
+  --reiback: var(--term);
 }
 
 .card > header > a.id { background-color: rgba(239, 239, 222, 0.2); }
