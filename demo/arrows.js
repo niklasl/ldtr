@@ -122,6 +122,13 @@ export function renderArrows(container) {
       arrow.classList.remove('rel')
     })
 
+    link.addEventListener('mouseover', evt => {
+      arrow.classList.add('rev')
+    })
+    link.addEventListener('mouseout', evt => {
+      arrow.classList.remove('rev')
+    })
+
     target.addEventListener('mouseover', evt => {
       arrow.classList.add('rev')
       if (arrowLabel) arrowLabel.classList.add('rev')
