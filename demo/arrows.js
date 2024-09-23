@@ -44,7 +44,7 @@ export function renderArrows(container) {
     let arrow = document.createElementNS(SVGNS, 'path')
     arrow.classList.add('arrow')
 
-    if (link.closest('.annotation') != null) {
+    if (link.parentNode.classList.contains('annotation')) {
       arrow.classList.add('rei')
     }
 
