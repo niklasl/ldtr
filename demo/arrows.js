@@ -49,7 +49,9 @@ export function renderArrows(container) {
     }
 
     let arrowLabel
-    let label = link.closest('article > p, div > p, div').querySelector('b')
+    let label = link.parentNode.closest(
+      'article > p:has(>b), article > div:has(>b), div > p:has(>b), div:has(>b)'
+    )?.querySelector('b')
     if (label) {
       arrowLabel = document.createElement('span')
       arrowLabel.classList.add('arrow')
