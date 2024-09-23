@@ -44,12 +44,14 @@ export function renderArrows(container) {
     let arrow = document.createElementNS(SVGNS, 'path')
     arrow.classList.add('arrow')
 
-    if (link.parentNode.classList.contains('annotation')) {
+    const isAnnotation = link.parentNode.classList.contains('annotation')
+
+    if (isAnnotation) {
       arrow.classList.add('rei')
     }
 
     let arrowLabel
-    let label = link.parentNode.closest(
+    let label = isAnnotation ? null : link.parentNode.closest(
       'article > p:has(>b), article > div:has(>b), div > p:has(>b), div:has(>b)'
     )?.querySelector('b')
     if (label) {
