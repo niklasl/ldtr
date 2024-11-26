@@ -1,5 +1,6 @@
 {
   "name": "ldtr",
+  "type": "module",
   "description": "Linked Data Transcriber",
   "keywords": [
     "Linked Data",
@@ -28,11 +29,9 @@
   },
   "version": "0.6.4",
   "dependencies": {
-    "@xmldom/xmldom": "^0.7.7",
-    "esm": "^3.2.14"
+    "@xmldom/xmldom": "^0.7.7"
   },
   "browser": {
-    "esm": false,
     "@xmldom/xmldom": false
   },
   "devDependencies": {
